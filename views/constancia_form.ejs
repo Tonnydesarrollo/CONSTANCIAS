@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Constancias de Capacitación</title>
+
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 30px;
+    }
+
+    h1, h2 {
+      margin-bottom: 10px;
+    }
+
+    .grupo {
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    select, input[type="date"], input[type="text"] {
+      padding: 6px;
+      width: 320px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    table th, table td {
+      border: 1px solid #ccc;
+      padding: 8px;
+    }
+
+    table th {
+      background: #f2f2f2;
+    }
+
+    button {
+      padding: 8px 14px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    .acciones button {
+      margin-right: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Generación de Constancias</h1>
+
+  <!-- ================= SUCURSAL ================= -->
+  <div class="grupo">
+    <label>Sucursal</label>
+    <h2><%= sucursal.LABEL %></h2>
+  </div>
+
+  <!-- ================= CAPACITADOR ================= -->
+  <div class="grupo">
+    <label>Capacitador</label>
+
+    <select id="capacitador">
+      <% 
+        const primerCapacitador = sucursal.CAPACITADORES?.[0];
+      %>
+
+      <% if (primerCapacitador) { %>
+        <option selected value="<%= primerCapacitador %>">
+          <%= primerCapacitador %>
+        </option>
+      <% } %>
+
+      <% capacitadores.forEach(emp => { %>
+        <option value="<%= emp.ID %>">
+          <%= emp.NOMBRE %>
+        </option>
+      <% }) %>
+    </select>
+  </div>
+
+  <!-- ================= FECHA ================= -->
+  <div class="grupo">
+    <label>Fecha de capacitación</label>
+    <input type="date" id="fecha" value="<%= fecha %>" />
+  </div>
+
+  <!-- ================= PARTICIPANTES ================= -->
+  <div class="grupo">
+    <label>Participantes</label>
+
+    <table id="tablaParticipantes">
+      <thead>
+        <tr>
+          <th>Nombre completo</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <input type="text" name="nombres[]" placeholder="Nombre del participante" />
+          </td>
+          <td>
+            <button type="button" onclick="eliminarFila(this)">❌</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <button type="button" onclick="agregarFila()">➕ Agregar participante</button>
+  </div>
+
+  <!-- ================= IMPORTAR ================= -->
+  <div class="grupo">
+    <label>Cargar desde Excel o CSV</label>
+    <input type="file" id="archivo" accept=".xlsx,.csv" />
+  </div>
+
+  <!-- ================= ACCIONES ================= -->
+  <div class="grupo acciones">
+    <button onclick="exportarExcel()">📥 Descargar lista en Excel</button>
+    <button onclick="generarConstancias()">🚀 Generar constancias</button>
+  </div>
+
+  <script>
+    function agregarFila() {
+      const tbody = document.querySelector("#tablaParticipantes tbody");
+      const tr = document.createElement("tr");
+
+      tr.innerHTML = `
+        <td>
+          <input type="text" name="nombres[]" placeholder="Nombre del participante" />
+        </td>
+        <td>
+          <button type="button" onclick="eliminarFila(this)">❌</button>
+        </td>
+      `;
+
+      tbody.appendChild(tr);
+    }
+
+    function eliminarFila(btn) {
+      btn.closest("tr").remove();
+    }
+
+    function obtenerNombres() {
+      return Array.from(document.querySelectorAll('input[name="nombres[]"]'))
+        .map(i => i.value)
+        .filter(v => v.trim() !== "");
+    }
+
+    function generarConstancias() {
+      const data = {
+        sucursal: "<%= sucursal.ID %>",
+        capacitador: document.getElementById("capacitador").value,
+        fecha: document.getElementById("fecha").value,
+        participantes: obtenerNombres()
+      };
+
+      console.log("DATA A GENERAR:", data);
+      alert("Datos listos. Revisa la consola 🚀");
+    }
+
+    function exportarExcel() {
+      const nombres = obtenerNombres();
+      if (!nombres.length) {
+        alert("No hay nombres para exportar");
+        return;
+      }
+
+      console.log("EXPORTAR EXCEL:", nombres);
+      alert("Aquí irá la generación del Excel (fase 2)");
+    }
+  </script>
+
+</body>
+</html>
