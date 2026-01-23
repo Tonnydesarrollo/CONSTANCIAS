@@ -39,15 +39,18 @@
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
   }
 
-  .diploma-canvas {
+.diploma-canvas {
   width: 11in;
-  height: 8.5in;
+  min-height: 8.5in;   /* ✅ NO height */
   background-color: #fff;
-  padding: 0.25in;          /* margen interno elegante */
+  padding: 0.25in;
   box-sizing: border-box;
   position: relative;
-  overflow: hidden;
+
+  page-break-after: always;
+  break-after: page;
 }
+
 
   .border-frame {
     width: 100%;
@@ -199,13 +202,30 @@
     grid-template-columns: 1fr 1fr 1fr;
     align-items: end;
   }
+.sig-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
 
-  .sig-block {
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+.sig-img {
+  max-height: 90px;
+  display: block;
+}
+
+
+
+.border-frame {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-signatures {
+  margin-top: auto;           /* 🔥 EMPUJA AL FONDO */
+}
+
+
 
   .sig-line {
     width: 280px;
@@ -217,10 +237,9 @@
   text-transform: uppercase;
 }
 
-  .sig-img {
-    max-height: 90px;
-    margin-bottom: -15px;
-  }
+
+
+
 </style>
 
 <div class="toolbar no-print">
@@ -232,7 +251,7 @@
 
     <div class="header">
       <div class="logo-eg-container">
-        <img src="https://drive.google.com/thumbnail?id=15YmFa3PwCXcZCdgzrtlFGcdIGXXF0XvL"
+        <img src="/img/Logo sin fondo 3D HD.png"
              class="logo-eg-img"
              alt="Desarrollo EG">
       </div>
@@ -288,6 +307,7 @@
 
       <div class="sig-block">
         <img src="https://drive.google.com/thumbnail?id=1dvVupM4hcDxuLGWbasND8VK-kjGq2Kwq" class="sig-img">
+
         <div class="sig-line"></div>
         <strong>MORELOS ENRIQUE PEREZ PICOS</strong>
         <div style="font-size:10px; color:#c0392b; font-weight:bold;">

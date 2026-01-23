@@ -1,5 +1,5 @@
 import dotenvFlow from "dotenv-flow";
-dotenvFlow.config(); // ← SIEMPRE PRIMERA LÍNEA
+dotenvFlow.config(); 
 
 import express from "express";
 import path from "path";
@@ -17,6 +17,12 @@ const app = express();
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
+/** * CONFIGURACIÓN DE CARPETA PÚBLICA 
+ * Esto mapea la carpeta física 'PUBLICIMG' a la URL '/img'
+ * Subimos dos niveles (../..) porque server.js está en API-CONSTANCIAS/
+ */
+// Retrocede un nivel (sale de API-CONSTANCIAS) y entra a PUBLICIMG
+app.use("/img", express.static(path.join(__dirname, "..", "PUBLICIMG")));
 // ================= VIEWS =================
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -31,9 +37,6 @@ app.get("/health", (_, res) => {
 });
 
 // ================= ROUTES =================
-// 👇 TODAS las rutas de constancias viven aquí
-// GET  /constancias/:id/HTML
-// POST /constancias/generar
 app.use("/constancias", constanciasRoutes);
 
 // ================= START =================

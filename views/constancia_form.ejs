@@ -2,278 +2,404 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Constancias de Capacitación</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Constancias de Capacitación | Desarrollo EG</title>
 
   <style>
+    :root {
+      /* Paleta institucional basada en el logo de Desarrollo EG */
+      --primary: #1e3a8a; /* Azul marino profundo */
+      --accent: #d97706;  /* Dorado/Ambar sutil para detalles */
+      --primary-hover: #172554;
+      --danger: #ef4444;
+      --bg: #f1f5f9;
+      --text: #0f172a;
+      --border: #cbd5e1;
+    }
+
     body {
-      font-family: Arial, Helvetica, sans-serif;
-      margin: 30px;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
     }
 
-    h1, h2 {
-      margin-bottom: 10px;
+    .container {
+      max-width: 850px;
+      width: 100%;
+      background: white;
+      padding: 0;
+      border-radius: 12px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
     }
 
-    .grupo {
-      margin-bottom: 20px;
+    /* ENCABEZADO INSTITUCIONAL */
+    .header-institucional {
+      background: linear-gradient(135deg, #1e3a8a 0%, #172554 100%);
+      padding: 30px;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .logo-img {
+      height: 80px;
+      width: auto;
+      filter: drop-shadow(0 0 8px rgba(255,255,255,0.2));
+    }
+
+    .header-text h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border: none;
+      color: white;
+    }
+
+    .header-text p {
+      margin: 5px 0 0 0;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .content-padding {
+      padding: 40px;
+    }
+
+    .grupo { margin-bottom: 25px; }
 
     label {
-      font-weight: bold;
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
       display: block;
-      margin-bottom: 5px;
+      color: #64748b;
     }
+
+    h2 { margin: 0; font-size: 1.3rem; color: var(--primary); font-weight: 600; }
 
     select, input[type="date"], input[type="text"] {
-      padding: 6px;
-      width: 320px;
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 1rem;
+      box-sizing: border-box;
+      transition: all 0.2s;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
+    select:focus, input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+    }
+
+    .table-container {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
       margin-top: 10px;
     }
 
-    table th, table td {
-      border: 1px solid #ccc;
-      padding: 8px;
-    }
-
-    table th {
-      background: #f2f2f2;
-    }
+    table { width: 100%; border-collapse: collapse; }
+    table th { background: #f8fafc; text-align: left; padding: 12px; font-size: 0.8rem; color: #475569; }
+    table td { padding: 10px 12px; border-top: 1px solid var(--border); }
 
     button {
-      padding: 8px 14px;
-      margin-top: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-weight: 600;
       cursor: pointer;
+      transition: all 0.2s;
+      border: none;
     }
 
-    .acciones button {
-      margin-right: 10px;
+    .btn-add {
+      background-color: #f1f5f9;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      width: 100%;
+      margin-top: 10px;
     }
+    .btn-add:hover { background-color: var(--primary); color: white; }
+
+    .btn-delete {
+      background-color: #fee2e2;
+      color: var(--danger);
+      width: 32px;
+      height: 32px;
+      padding: 0;
+    }
+    .btn-delete:hover { background-color: var(--danger); color: white; }
+
+    .acciones {
+      display: flex;
+      gap: 15px;
+      margin-top: 40px;
+      padding-top: 25px;
+      border-top: 2px solid var(--bg);
+    }
+
+    .btn-primary { background-color: var(--primary); color: white; flex: 2; }
+    .btn-primary:hover { background-color: var(--primary-hover); box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2); }
+    .btn-secondary { background-color: #e2e8f0; color: #1e293b; flex: 1; }
+
+    .file-zone {
+      background: #f8fafc;
+      border: 2px dashed var(--border);
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    /* LOADER */
+    #loader-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(5px);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      color: white;
+    }
+
+    .spinner {
+      width: 60px; height: 60px;
+      border: 6px solid rgba(255,255,255,0.2);
+      border-top: 6px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   </style>
 </head>
 
 <body>
 
-  <h1>Generación de Constancias</h1>
+<div id="loader-overlay">
+  <div class="spinner"></div>
+  <div id="loader-message" style="margin-top: 20px; font-weight: 500;">Procesando datos...</div>
+</div>
 
-  <!-- ================= SUCURSAL ================= -->
-  <div class="grupo">
-    <label>Sucursal</label>
-    <h2><%= sucursal.LABEL %></h2>
+<div class="container">
+  <div class="header-institucional">
+    <div class="logo-container">
+      <img src="/img/Logo sin fondo 3D HD.png" alt="Desarrollo EG" class="logo-img">
+      <div class="header-text">
+        <h1>Gestión de Constancias</h1>
+        <p>Desarrollo EG Consultores</p>
+      </div>
+    </div>
   </div>
 
-  <!-- ================= CAPACITADOR ================= -->
-  <div class="grupo">
-    <label>Capacitador</label>
+  <div class="content-padding">
+    <div class="grupo">
+      <label>Unidad / Sucursal</label>
+      <h2><%= sucursal.LABEL %></h2>
+    </div>
 
-    <%
-      const listaCapacitadores = Array.isArray(capacitadores) ? capacitadores : [];
-    %>
+    <div class="grupo">
+      <label>Consultor / Capacitador Autorizado</label>
+      <select id="capacitador" name="capacitador">
+        <% if (locals.capacitadorSeleccionado) { %>
+          <option value="<%= capacitadorSeleccionado.ID %>" selected><%= capacitadorSeleccionado.NOMBRE %></option>
+        <% } else { %>
+          <option value="" selected disabled>-- Seleccione un capacitador --</option>
+        <% } %>
+        <% (Array.isArray(capacitadores) ? capacitadores : []).forEach(emp => { 
+            if (!locals.capacitadorSeleccionado || emp.ID !== capacitadorSeleccionado.ID) { %>
+              <option value="<%= emp.ID %>"><%= emp.NOMBRE %></option>
+        <% } }) %>
+      </select>
+    </div>
 
-    <select id="capacitador" name="capacitador">
+    <div class="grupo">
+      <label>Fecha de Emisión</label>
+      <input type="date" id="fecha" value="<%= fecha %>" />
+    </div>
 
-      <% if (capacitadorSeleccionado) { %>
-        <option value="<%= capacitadorSeleccionado.ID %>" selected>
-          <%= capacitadorSeleccionado.NOMBRE %>
-        </option>
-      <% } else { %>
-        <option value="" selected>-- Selecciona capacitador --</option>
-      <% } %>
+    <div class="grupo">
+      <label>Registro de Participantes</label>
+      <div class="table-container">
+        <table id="tablaParticipantes">
+          <thead>
+            <tr>
+              <th>Nombre Completo</th>
+              <th style="width: 50px;"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="text" name="nombres[]" placeholder="Nombre completo del participante" /></td>
+              <td><button type="button" class="btn-delete" onclick="eliminarFila(this)">✕</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <button type="button" class="btn-add" onclick="agregarFila()">+ Añadir participante manualmente</button>
+    </div>
 
-      <% listaCapacitadores.forEach(emp => {
-           if (!capacitadorSeleccionado || emp.ID !== capacitadorSeleccionado.ID) {
-      %>
-        <option value="<%= emp.ID %>">
-          <%= emp.NOMBRE %>
-        </option>
-      <% } }) %>
+    <div class="grupo">
+      <label>Importación de Listas (Excel / CSV)</label>
+      <div class="file-zone">
+        <input type="file" id="archivo" accept=".xlsx,.csv" />
+      </div>
+    </div>
 
-    </select>
+    <div class="acciones">
+      <button class="btn-secondary" onclick="exportarExcel()">📥 Respaldar Lista</button>
+      <button class="btn-primary" onclick="generarConstancias()">🚀 Validar y Generar Constancias</button>
+    </div>
   </div>
+</div>
 
-  <!-- ================= FECHA ================= -->
-  <div class="grupo">
-    <label>Fecha de capacitación</label>
-    <input type="date" id="fecha" value="<%= fecha %>" />
-  </div>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
-  <!-- ================= PARTICIPANTES ================= -->
-  <div class="grupo">
-    <label>Participantes</label>
-
-    <table id="tablaParticipantes">
-      <thead>
-        <tr>
-          <th>Nombre completo</th>
-          <th>Acción</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>
-            <input type="text" name="nombres[]" placeholder="Nombre del participante" />
-          </td>
-          <td>
-            <button type="button" onclick="eliminarFila(this)">❌</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <button type="button" onclick="agregarFila()">➕ Agregar participante</button>
-  </div>
-
-  <!-- ================= IMPORTAR ================= -->
-  <div class="grupo">
-    <label>Cargar desde Excel o CSV</label>
-    <input type="file" id="archivo" accept=".xlsx,.csv" />
-  </div>
-
-  <!-- ================= ACCIONES ================= -->
-  <div class="grupo acciones">
-    <button onclick="exportarExcel()">📥 Descargar lista en Excel</button>
-    <button onclick="generarConstancias()">🚀 Generar constancias</button>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-
-  <script>
-    function agregarFila() {
-      const tbody = document.querySelector("#tablaParticipantes tbody");
-      const tr = document.createElement("tr");
-
-      tr.innerHTML = `
-        <td>
-          <input type="text" name="nombres[]" placeholder="Nombre del participante" />
-        </td>
-        <td>
-          <button type="button" onclick="eliminarFila(this)">❌</button>
-        </td>
-      `;
-
-      tbody.appendChild(tr);
-    }
-
-    function eliminarFila(btn) {
-      btn.closest("tr").remove();
-    }
-
-    function obtenerNombres() {
-      return Array.from(document.querySelectorAll('input[name="nombres[]"]'))
-        .map(i => i.value)
-        .filter(v => v.trim() !== "");
-    }
-function generarConstancias() {
-  const participantes = obtenerNombres();
-
-  if (!participantes.length) {
-    alert("Debes agregar al menos un participante");
-    return;
+<script>
+  function showLoader(mensaje) {
+    document.getElementById("loader-message").innerText = mensaje || "Procesando...";
+    document.getElementById("loader-overlay").style.display = "flex";
   }
 
-  if (!document.getElementById("capacitador").value) {
-    alert("Selecciona un capacitador");
-    return;
+  function hideLoader() {
+    document.getElementById("loader-overlay").style.display = "none";
   }
 
-  fetch("/constancias/generar", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      sucursalId: "<%= sucursal.ID %>",
-      capacitadorId: document.getElementById("capacitador").value,
-      fecha: document.getElementById("fecha").value,
-      participantes
-    })
-  })
-  .then(r => r.text())
-  .then(html => {
-    const w = window.open();
-    w.document.write(html);
-    w.document.close();
-  });
-}
-
-
-
-    function exportarExcel() {
-  const nombres = obtenerNombres();
-
-  if (!nombres.length) {
-    alert("No hay participantes para exportar");
-    return;
-  }
-
-  // 👉 Construimos filas para Excel
-  const data = [
-    ["Nombre del participante"], // encabezado
-    ...nombres.map(n => [n])
-  ];
-
-  // 👉 Crear hoja y libro
-  const worksheet = XLSX.utils.aoa_to_sheet(data);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Participantes");
-
-  // 👉 Ajustar ancho de columna
-  worksheet["!cols"] = [{ wch: 40 }];
-
-  // 👉 Nombre del archivo
-  const fecha = document.getElementById("fecha").value || "sin-fecha";
-  const fileName = `participantes_${fecha}.xlsx`;
-
-  // 👉 Descargar
-  XLSX.writeFile(workbook, fileName);
-}
-    document.getElementById("archivo").addEventListener("change", e => {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-
-      reader.onload = evt => {
-  const data = new Uint8Array(evt.target.result);
-  const workbook = XLSX.read(data, { type: "array" });
-  const sheet = workbook.Sheets[workbook.SheetNames[0]];
-  const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
-  const tbody = document.querySelector("#tablaParticipantes tbody");
-  tbody.innerHTML = "";
-
-  rows.forEach((r, index) => {
-    const nombre = (r[0] || "").toString().trim();
-
-    if (index === 0) {
-      const header = nombre.toLowerCase();
-      if (
-        header.includes("nombre") ||
-        header.includes("participante") ||
-        header.includes("empleado")
-      ) return;
-    }
-
-    if (!nombre) return;
-
+  function agregarFila() {
+    const tbody = document.querySelector("#tablaParticipantes tbody");
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td><input type="text" name="nombres[]" value="${nombre}" /></td>
-      <td><button type="button" onclick="eliminarFila(this)">❌</button></td>
+      <td><input type="text" name="nombres[]" placeholder="Nombre completo del participante" /></td>
+      <td><button type="button" class="btn-delete" onclick="eliminarFila(this)">✕</button></td>
     `;
     tbody.appendChild(tr);
+  }
+
+  function eliminarFila(btn) {
+    const filas = document.querySelectorAll("#tablaParticipantes tbody tr");
+    if (filas.length > 1) {
+      btn.closest("tr").remove();
+    } else {
+      btn.closest("tr").querySelector('input').value = "";
+    }
+  }
+
+  function obtenerNombres() {
+    return Array.from(document.querySelectorAll('input[name="nombres[]"]'))
+      .map(i => i.value)
+      .filter(v => v.trim() !== "");
+  }
+
+  function generarConstancias() {
+    const participantes = obtenerNombres();
+    const capacitador = document.getElementById("capacitador").value;
+    const fecha = document.getElementById("fecha").value;
+
+    if (!participantes.length) return alert("Ingrese al menos un participante.");
+    if (!capacitador) return alert("Seleccione el capacitador responsable.");
+    if (!fecha) return alert("Defina la fecha de la capacitación.");
+
+    showLoader("Generando constancias con firma institucional...");
+
+    fetch("/constancias/generar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sucursalId: "<%= sucursal.ID %>",
+        capacitadorId: capacitador,
+        fecha: fecha,
+        participantes
+      })
+    })
+    .then(r => r.text())
+    .then(html => {
+      const w = window.open();
+      w.document.write(html);
+      w.document.close();
+    })
+    .catch(err => alert("Error de comunicación con el sistema."))
+    .finally(() => hideLoader());
+  }
+
+  function exportarExcel() {
+    const nombres = obtenerNombres();
+    if (!nombres.length) return alert("No hay datos para exportar.");
+
+    showLoader("Exportando base de datos...");
+    
+    setTimeout(() => {
+      const data = [["Nombre del participante"], ...nombres.map(n => [n])];
+      const worksheet = XLSX.utils.aoa_to_sheet(data);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Participantes");
+      worksheet["!cols"] = [{ wch: 45 }];
+      const f = document.getElementById("fecha").value || "sin-fecha";
+      XLSX.writeFile(workbook, `capacitacion_eg_${f}.xlsx`);
+      hideLoader();
+    }, 500);
+  }
+
+  document.getElementById("archivo").addEventListener("change", e => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    showLoader("Procesando lista externa...");
+
+    const reader = new FileReader();
+    reader.onload = evt => {
+      try {
+        const data = new Uint8Array(evt.target.result);
+        const workbook = XLSX.read(data, { type: "array" });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+        const tbody = document.querySelector("#tablaParticipantes tbody");
+        tbody.innerHTML = "";
+
+        rows.forEach((r, index) => {
+          const nombre = (r[0] || "").toString().trim();
+          if (index === 0 && /nombre|participante|empleado/i.test(nombre)) return;
+          if (!nombre) return;
+
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td><input type="text" name="nombres[]" value="${nombre}" /></td>
+            <td><button type="button" class="btn-delete" onclick="eliminarFila(this)">✕</button></td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        alert("Formato de archivo no compatible.");
+      } finally {
+        e.target.value = "";
+        setTimeout(hideLoader, 600);
+      }
+    };
+    reader.readAsArrayBuffer(file);
   });
-
-  // 👇 ESTA LÍNEA ES LA CLAVE
-  document.getElementById("archivo").value = "";
-};
-
-
-      reader.readAsArrayBuffer(file);
-    });
-  </script>
+</script>
 
 </body>
 </html>
