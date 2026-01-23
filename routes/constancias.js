@@ -117,7 +117,7 @@ const empresa = {
   "diplomas_lote",
   {
     empresa,
-    sucursalLabel: sucursalData.LABEL,
+    sucursalLabel: sucursalData.LABEL2,
     logoEmpresa: empresa.logoUrl,
     capacitador: {
       nombre: capacitadorData.NOMBRE,

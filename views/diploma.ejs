@@ -1,21 +1,24 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@400;700&family=Playfair+Display:ital,wght@1,600&display=swap');
 
-  @media print {
-    .no-print { display: none !important; }
-    .diploma-canvas {
-  width: 1056px;
-  height: 816px;
-  background-color: #fff;
-}
-
+ @media print {
+  @page {
+    size: letter landscape;   /* 👈 CARTA HORIZONTAL REAL */
+    margin: 0;
   }
 
   body {
     margin: 0;
     padding: 0;
-    font-family: 'Montserrat', sans-serif;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
+
+  .no-print {
+    display: none !important;
+  }
+}
+
 
   .toolbar {
     position: fixed;
@@ -37,14 +40,14 @@
   }
 
   .diploma-canvas {
-    width: 1123px;
-    height: 794px;
-    background-color: #fff;
-    padding: 20px;
-    box-sizing: border-box;
-    position: relative;
-    overflow: hidden;
-  }
+  width: 11in;
+  height: 8.5in;
+  background-color: #fff;
+  padding: 0.25in;          /* margen interno elegante */
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
 
   .border-frame {
     width: 100%;
@@ -82,13 +85,55 @@
     object-fit: contain;
   }
 
-  .center-info {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 400px;
-    text-align: center;
-  }
+  /* ===== BLOQUE EMPRESA / SUCURSAL ===== */
+
+/* ===== BLOQUE EMPRESA / SUCURSAL ===== */
+
+.center-info {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 420px;                 /* 🔒 ancho máximo controlado */
+  max-width: 50%;
+  text-align: center;
+  line-height: 1.2;
+  overflow: hidden;
+}
+
+/* EMPRESA */
+.empresa-nombre {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #1a2a3a;
+  margin-bottom: 10px;
+
+  font-size: clamp(20px, 2.2vw, 30px); /* 🔥 AUTO AJUSTE */
+  line-height: 1.15;
+
+  white-space: normal;     /* 👈 permite 2 líneas */
+  word-break: break-word;
+}
+
+/* SEPARADOR PROTAGONISTA */
+.empresa-separador {
+  width: 220px;                /* ⬆️ MÁS LARGA */
+  height: 3px;                 /* ⬆️ MÁS GRUESA */
+  background-color: #c0392b;
+  margin: 0 auto 10px auto;
+}
+
+/* SUCURSAL */
+.sucursal-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 15px;          /* ⬆️ antes 13px */
+  font-weight: 600;         /* ⬆️ más presencia */
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #555;
+}
+
 
   .client-name {
     font-family: 'Cinzel', serif;
@@ -112,16 +157,32 @@
     margin: 0;
   }
 
-  .recipient-name {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: 55px;
-    color: #c0392b;
-    border-bottom: 2px solid #1a2a3a;
-    display: inline-block;
-    padding: 5px 15px;
-    white-space: nowrap;
-  }
+.recipient-name {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  color: #c0392b;
+
+  font-size: clamp(28px, 3vw, 55px);
+  line-height: 1.1;
+
+  border-bottom: 2px solid #1a2a3a;
+  display: inline-block;
+  padding: 5px 15px;
+
+  max-width: 90%;
+  white-space: normal;
+  text-align: center;
+
+  text-transform: uppercase; /* 🔥 AQUÍ */
+}
+
+.empresa-nombre{
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 
   .course-text {
     width: 90%;
@@ -151,6 +212,10 @@
     border-top: 2px solid #1a2a3a;
     margin: 5px 0;
   }
+.empresa-nombre,
+.sucursal-label {
+  text-transform: uppercase;
+}
 
   .sig-img {
     max-height: 90px;
@@ -173,11 +238,14 @@
       </div>
 
       <div class="center-info">
-        <div class="client-name"><%= empresa.nombre %></div>
-        <div style="font-size: 13px; color:#666;"><%= sucursalLabel %></div>
-      </div>
+  <div class="empresa-nombre"><%= empresa.nombre %></div>
+  <div class="empresa-separador"></div>
+  <div class="sucursal-label"><%= sucursalLabel %></div>
+</div>
 
-      <img src="<%= logoEmpresa %>" class="logo-cliente-img" alt="Logo Cliente">
+
+
+      <img src="<%= logoEmpresa %>&sz=200" class="logo-cliente-img" alt="Logo Cliente">
     </div>
 
     <div style="text-align:center; flex-grow:1; display:flex; flex-direction:column; justify-content:center;">
@@ -199,7 +267,10 @@
       <div style="margin-top:8px; font-size:15px;">
         Celebrado el día <strong><%= fecha.dia %></strong> de
         <strong><%= fecha.mes %></strong> del
-        <strong><%= fecha.anio %></strong>
+        <strong><%= fecha.anio %></strong>. En el municipio de
+          <strong>Navolato</strong>,
+        <strong>Sinaloa</strong>Con una Duracion de <strong>8 horas</strong>.
+
       </div>
     </div>
 

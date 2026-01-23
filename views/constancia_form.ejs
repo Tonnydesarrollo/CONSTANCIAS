@@ -201,16 +201,34 @@ function generarConstancias() {
 
 
     function exportarExcel() {
-      const nombres = obtenerNombres();
-      if (!nombres.length) {
-        alert("No hay nombres para exportar");
-        return;
-      }
+  const nombres = obtenerNombres();
 
-      console.log("EXPORTAR EXCEL:", nombres);
-      alert("Aquí irá la generación del Excel (fase 2)");
-    }
+  if (!nombres.length) {
+    alert("No hay participantes para exportar");
+    return;
+  }
 
+  // 👉 Construimos filas para Excel
+  const data = [
+    ["Nombre del participante"], // encabezado
+    ...nombres.map(n => [n])
+  ];
+
+  // 👉 Crear hoja y libro
+  const worksheet = XLSX.utils.aoa_to_sheet(data);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Participantes");
+
+  // 👉 Ajustar ancho de columna
+  worksheet["!cols"] = [{ wch: 40 }];
+
+  // 👉 Nombre del archivo
+  const fecha = document.getElementById("fecha").value || "sin-fecha";
+  const fileName = `participantes_${fecha}.xlsx`;
+
+  // 👉 Descargar
+  XLSX.writeFile(workbook, fileName);
+}
     document.getElementById("archivo").addEventListener("change", e => {
       const file = e.target.files[0];
       if (!file) return;
