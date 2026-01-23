@@ -1,24 +1,21 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@400;700&family=Playfair+Display:ital,wght@1,600&display=swap');
 
- @media print {
-  @page {
-    size: letter landscape;   /* 👈 CARTA HORIZONTAL REAL */
-    margin: 0;
+  @media print {
+    .no-print { display: none !important; }
+    .diploma-canvas {
+  width: 1056px;
+  height: 816px;
+  background-color: #fff;
+}
+
   }
 
   body {
     margin: 0;
     padding: 0;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    font-family: 'Montserrat', sans-serif;
   }
-
-  .no-print {
-    display: none !important;
-  }
-}
-
 
   .toolbar {
     position: fixed;
@@ -40,14 +37,14 @@
   }
 
   .diploma-canvas {
-  width: 11in;
-  height: 8.5in;
-  background-color: #fff;
-  padding: 0.25in;          /* margen interno elegante */
-  box-sizing: border-box;
-  position: relative;
-  overflow: hidden;
-}
+    width: 1123px;
+    height: 794px;
+    background-color: #fff;
+    padding: 20px;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+  }
 
   .border-frame {
     width: 100%;
@@ -85,49 +82,13 @@
     object-fit: contain;
   }
 
-  /* ===== BLOQUE EMPRESA / SUCURSAL ===== */
-
-/* ===== BLOQUE EMPRESA / SUCURSAL ===== */
-
-.center-info {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 480px;                /* ⬆️ más aire */
-  text-align: center;
-  line-height: 1.25;
-}
-
-/* EMPRESA */
-.empresa-nombre {
-  font-family: 'Cinzel', serif;
-  font-size: 30px;             /* ⬆️ MÁS GRANDE */
-  font-weight: 700;
-  letter-spacing: 3px;         /* ⬆️ más carácter */
-  text-transform: uppercase;
-  color: #1a2a3a;
-  margin-bottom: 10px;
-  white-space: nowrap;
-}
-
-/* SEPARADOR PROTAGONISTA */
-.empresa-separador {
-  width: 220px;                /* ⬆️ MÁS LARGA */
-  height: 3px;                 /* ⬆️ MÁS GRUESA */
-  background-color: #c0392b;
-  margin: 0 auto 10px auto;
-}
-
-/* SUCURSAL */
-.sucursal-label {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 15px;          /* ⬆️ antes 13px */
-  font-weight: 600;         /* ⬆️ más presencia */
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: #555;
-}
-
+  .center-info {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 400px;
+    text-align: center;
+  }
 
   .client-name {
     font-family: 'Cinzel', serif;
