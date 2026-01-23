@@ -1,9 +1,13 @@
-export async function obtenerEmpleadosCapacitadores() {
-  const res = await appsheetRequest({
-    table: "EMPLEADOS",
-    action: "Find",
-    data: [{ CAPACITA: "Y" }]
-  });
+import { leerTablaAppSheet } from "./appsheet.js";
 
-  return res;
+export async function obtenerCapacitadores() {
+  const rows = await leerTablaAppSheet("EMPLEADOS");
+
+  return rows
+    .filter(e => String(e.CAPACITA).toUpperCase() === "Y")
+    .map(e => ({
+      ID: e.ID || e["Row ID"],
+      NOMBRE: e.NOMBRE || "",
+      FIRMA: e.FIRMA || ""
+    }));
 }

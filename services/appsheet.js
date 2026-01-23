@@ -1,20 +1,36 @@
-import axios from "axios";
+export async function leerTablaAppSheet(nombreTabla) {
+  const APP_ID  = process.env.APPSHEET_APP_ID;
+  const API_KEY = process.env.APPSHEET_API_KEY;
 
-const BASE_URL = "https://api.appsheet.com/api/v2/apps";
+  if (!APP_ID || !API_KEY) {
+    throw new Error("❌ Variables de entorno AppSheet no disponibles");
+  }
 
-export async function appsheetRequest({ table, action, data = {} }) {
-  const url = `${BASE_URL}/${process.env.APPSHEET_APP_ID}/tables/${table}/Action`;
+  const url =
+    `https://api.appsheet.com/api/v2/apps/${APP_ID}/tables/${encodeURIComponent(nombreTabla)}/Action`;
 
   const body = {
-    Action: action,
-    Properties: {},
-    Rows: data
+    Action: "Find",
+    Properties: {
+      Locale: "es-MX",
+      Timezone: "Central Standard Time",
+      UserSettings: {}
+    },
+    Rows: []
   };
 
-  const headers = {
-    "ApplicationAccessKey": process.env.APPSHEET_API_KEY
-  };
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      ApplicationAccessKey: API_KEY,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(body)
+  });
 
-  const { data: response } = await axios.post(url, body, { headers });
-  return response;
+  const text = await res.text();
+  if (!text) return [];
+
+  const data = JSON.parse(text);
+  return Array.isArray(data) ? data : (data.Rows || []);
 }

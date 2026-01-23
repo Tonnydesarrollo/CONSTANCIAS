@@ -70,22 +70,28 @@
   <div class="grupo">
     <label>Capacitador</label>
 
-    <select id="capacitador">
-      <% 
-        const primerCapacitador = sucursal.CAPACITADORES?.[0];
-      %>
+    <%
+      const listaCapacitadores = Array.isArray(capacitadores) ? capacitadores : [];
+    %>
 
-      <% if (primerCapacitador) { %>
-        <option selected value="<%= primerCapacitador %>">
-          <%= primerCapacitador %>
+    <select id="capacitador" name="capacitador">
+
+      <% if (capacitadorSeleccionado) { %>
+        <option value="<%= capacitadorSeleccionado.ID %>" selected>
+          <%= capacitadorSeleccionado.NOMBRE %>
         </option>
+      <% } else { %>
+        <option value="" selected>-- Selecciona capacitador --</option>
       <% } %>
 
-      <% capacitadores.forEach(emp => { %>
+      <% listaCapacitadores.forEach(emp => {
+           if (!capacitadorSeleccionado || emp.ID !== capacitadorSeleccionado.ID) {
+      %>
         <option value="<%= emp.ID %>">
           <%= emp.NOMBRE %>
         </option>
-      <% }) %>
+      <% } }) %>
+
     </select>
   </div>
 
@@ -133,6 +139,8 @@
     <button onclick="generarConstancias()">🚀 Generar constancias</button>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
   <script>
     function agregarFila() {
       const tbody = document.querySelector("#tablaParticipantes tbody");
@@ -159,18 +167,38 @@
         .map(i => i.value)
         .filter(v => v.trim() !== "");
     }
+function generarConstancias() {
+  const participantes = obtenerNombres();
 
-    function generarConstancias() {
-      const data = {
-        sucursal: "<%= sucursal.ID %>",
-        capacitador: document.getElementById("capacitador").value,
-        fecha: document.getElementById("fecha").value,
-        participantes: obtenerNombres()
-      };
+  if (!participantes.length) {
+    alert("Debes agregar al menos un participante");
+    return;
+  }
 
-      console.log("DATA A GENERAR:", data);
-      alert("Datos listos. Revisa la consola 🚀");
-    }
+  if (!document.getElementById("capacitador").value) {
+    alert("Selecciona un capacitador");
+    return;
+  }
+
+  fetch("/constancias/generar", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      sucursalId: "<%= sucursal.ID %>",
+      capacitadorId: document.getElementById("capacitador").value,
+      fecha: document.getElementById("fecha").value,
+      participantes
+    })
+  })
+  .then(r => r.text())
+  .then(html => {
+    const w = window.open();
+    w.document.write(html);
+    w.document.close();
+  });
+}
+
+
 
     function exportarExcel() {
       const nombres = obtenerNombres();
@@ -182,6 +210,51 @@
       console.log("EXPORTAR EXCEL:", nombres);
       alert("Aquí irá la generación del Excel (fase 2)");
     }
+
+    document.getElementById("archivo").addEventListener("change", e => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+
+      reader.onload = evt => {
+  const data = new Uint8Array(evt.target.result);
+  const workbook = XLSX.read(data, { type: "array" });
+  const sheet = workbook.Sheets[workbook.SheetNames[0]];
+  const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+  const tbody = document.querySelector("#tablaParticipantes tbody");
+  tbody.innerHTML = "";
+
+  rows.forEach((r, index) => {
+    const nombre = (r[0] || "").toString().trim();
+
+    if (index === 0) {
+      const header = nombre.toLowerCase();
+      if (
+        header.includes("nombre") ||
+        header.includes("participante") ||
+        header.includes("empleado")
+      ) return;
+    }
+
+    if (!nombre) return;
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><input type="text" name="nombres[]" value="${nombre}" /></td>
+      <td><button type="button" onclick="eliminarFila(this)">❌</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // 👇 ESTA LÍNEA ES LA CLAVE
+  document.getElementById("archivo").value = "";
+};
+
+
+      reader.readAsArrayBuffer(file);
+    });
   </script>
 
 </body>

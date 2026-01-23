@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Diplomas</title>
+  <style>
+    @media print {
+      .page-break { page-break-after: always; }
+    }
+    @media print {
+  @page {
+    size: letter landscape;
+    margin: 0;
+  }
+
+  body {
+    margin: 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .page-break {
+    page-break-after: always;
+  }
+}
+
+  </style>
+</head>
+<body>
+
+<% participantes.forEach((nombre, i) => { %>
+
+  <%- include("diploma", {
+    participante: nombre,
+    empresa,
+    sucursalLabel,
+    logoEmpresa,
+    capacitador,
+    fecha
+  }) %>
+
+  <% if (i < participantes.length - 1) { %>
+    <div class="page-break"></div>
+  <% } %>
+
+<% }) %>
+
+</body>
+</html>

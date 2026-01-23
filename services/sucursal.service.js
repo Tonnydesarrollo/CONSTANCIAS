@@ -1,11 +1,11 @@
-import { appsheetRequest } from "./appsheet.js";
+import { leerTablaAppSheet } from "./appsheet.js";
 
 export async function obtenerSucursalCompleta(idSucursal) {
-  const res = await appsheetRequest({
-    table: "SUCURSALES",
-    action: "Find",
-    data: [{ ID: idSucursal }]
-  });
+  const rows = await leerTablaAppSheet("SUCURSALES");
 
-  return res[0];
+  return (
+    rows.find(r =>
+      String(r.ID || r["Row ID"]) === String(idSucursal)
+    ) || null
+  );
 }
