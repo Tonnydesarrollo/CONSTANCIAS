@@ -1,17 +1,38 @@
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@400;700&family=Playfair+Display:ital,wght@1,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@400;700&family=Playfair+Display:ital,wght@1,600&display=swap');
 
- @media print {
+/* =========================================================
+   IMPRESIÓN (LA PARTE CRÍTICA)
+========================================================= */
+@media print {
   @page {
-    size: letter landscape;   /* 👈 CARTA HORIZONTAL REAL */
+    size: letter landscape;
     margin: 0;
   }
 
-  body {
+  /* ❌ NO fijar height aquí */
+  html, body {
     margin: 0;
     padding: 0;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+  }
+
+  /* Cada diploma empieza en hoja nueva */
+  .diploma-canvas {
+    width: 11in;
+    min-height: 8.5in;
+    page-break-before: always;
+    break-before: page;
+  }
+
+  /* El primero NO crea hoja en blanco */
+  .diploma-canvas:first-child {
+    page-break-before: auto;
+    break-before: auto;
+  }
+
+  /* Altura interna real */
+  .border-frame {
+    min-height: calc(8.5in - 0.5in);
   }
 
   .no-print {
@@ -19,91 +40,102 @@
   }
 }
 
+/* =========================================================
+   UI / TOOLBAR
+========================================================= */
+.toolbar {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 100;
+}
 
-  .toolbar {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 100;
-  }
+.btn-save {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
 
-  .btn-save {
-    background-color: #e74c3c;
-    color: white;
-    border: none;
-    padding: 12px 25px;
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 4px;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-  }
-
+/* =========================================================
+   CONTENEDOR DIPLOMA
+========================================================= */
 .diploma-canvas {
   width: 11in;
-  min-height: 8.5in;   /* ✅ NO height */
+  min-height: 8.5in;
   background-color: #fff;
   padding: 0.25in;
   box-sizing: border-box;
   position: relative;
+}
 
-  page-break-after: always;
-  break-after: page;
+/* =========================================================
+   MARCO
+========================================================= */
+.border-frame {
+  width: 100%;
+  height: 100%;
+  border: 6px solid #1a2a3a;
+  outline: 2px solid #c0392b;
+  outline-offset: -12px;
+  padding: 25px 50px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 180px;
+  position: relative;
+}
+
+.logo-eg-container {
+  width: 450px;
+  height: 180px;              /* 🔒 MISMA ALTURA DEL HEADER */
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: hidden;           /* 🔥 CLAVE */
 }
 
 
-  .border-frame {
-    width: 100%;
-    height: 100%;
-    border: 6px solid #1a2a3a;
-    outline: 2px solid #c0392b;
-    outline-offset: -12px;
-    padding: 25px 50px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    background: #fff;
-  }
+.logo-eg-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
 
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    height: 180px;
-    position: relative;
-  }
+.logo-cliente-img {
+  max-width: 250px;
+  max-height: 120px;
+  object-fit: contain;
+}
 
-  .logo-eg-container {
-    width: 450px;
-    height: 100%;
-    display: flex;
-    align-items: center;
-  }
-
-  .logo-eg-img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-  }
-
-  /* ===== BLOQUE EMPRESA / SUCURSAL ===== */
-
-/* ===== BLOQUE EMPRESA / SUCURSAL ===== */
-
+/* =========================================================
+   BLOQUE EMPRESA / SUCURSAL
+========================================================= */
 .center-info {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  width: 420px;                 /* 🔒 ancho máximo controlado */
+  width: 420px;
   max-width: 50%;
   text-align: center;
   line-height: 1.2;
-  overflow: hidden;
 }
 
-/* EMPRESA */
 .empresa-nombre {
   font-family: 'Cinzel', serif;
   font-weight: 700;
@@ -111,97 +143,75 @@
   text-transform: uppercase;
   color: #1a2a3a;
   margin-bottom: 10px;
-
-  font-size: clamp(20px, 2.2vw, 30px); /* 🔥 AUTO AJUSTE */
+  font-size: clamp(20px, 2.2vw, 30px);
   line-height: 1.15;
 
-  white-space: normal;     /* 👈 permite 2 líneas */
-  word-break: break-word;
-}
-
-/* SEPARADOR PROTAGONISTA */
-.empresa-separador {
-  width: 220px;                /* ⬆️ MÁS LARGA */
-  height: 3px;                 /* ⬆️ MÁS GRUESA */
-  background-color: #c0392b;
-  margin: 0 auto 10px auto;
-}
-
-/* SUCURSAL */
-.sucursal-label {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 15px;          /* ⬆️ antes 13px */
-  font-weight: 600;         /* ⬆️ más presencia */
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: #555;
-}
-
-
-  .client-name {
-    font-family: 'Cinzel', serif;
-    font-size: 22px;
-    color: #1a2a3a;
-    text-transform: uppercase;
-  }
-
-  .logo-cliente-img {
-    max-width: 250px;
-    max-height: 120px;
-    object-fit: contain;
-  }
-
-  .title-constancia {
-    font-family: 'Cinzel', serif;
-    font-size: 60px;
-    color: #1a2a3a;
-    letter-spacing: 8px;
-    text-align: center;
-    margin: 0;
-  }
-
-.recipient-name {
-  font-family: 'Playfair Display', serif;
-  font-style: italic;
-  color: #c0392b;
-
-  font-size: clamp(28px, 3vw, 55px);
-  line-height: 1.1;
-
-  border-bottom: 2px solid #1a2a3a;
-  display: inline-block;
-  padding: 5px 15px;
-
-  max-width: 90%;
-  white-space: normal;
-  text-align: center;
-
-  text-transform: uppercase; /* 🔥 AQUÍ */
-}
-
-.empresa-nombre{
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
+.empresa-separador {
+  width: 220px;
+  height: 3px;
+  background-color: #c0392b;
+  margin: 0 auto 10px;
+}
 
-  .course-text {
-    width: 90%;
-    margin: 5px auto;
-    text-align: justify;
-    text-align-last: center;
-    font-size: 18px;
-    line-height: 1.4;
-    color: #222;
-  }
+.sucursal-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #555;
+}
 
-  .footer-signatures {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    align-items: end;
-  }
+/* =========================================================
+   CONTENIDO CENTRAL
+========================================================= */
+.title-constancia {
+  font-family: 'Cinzel', serif;
+  font-size: 60px;
+  color: #1a2a3a;
+  letter-spacing: 8px;
+  margin: 0;
+}
+
+.recipient-name {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  color: #c0392b;
+  font-size: clamp(28px, 3vw, 55px);
+  line-height: 1.1;
+  border-bottom: 2px solid #1a2a3a;
+  padding: 5px 15px;
+  display: inline-block;
+  max-width: 90%;
+  text-transform: uppercase;
+}
+
+.course-text {
+  width: 90%;
+  margin: 5px auto;
+  text-align: justify;
+  text-align-last: center;
+  font-size: 18px;
+  line-height: 1.4;
+  color: #222;
+}
+
+/* =========================================================
+   FOOTER / FIRMAS
+========================================================= */
+.footer-signatures {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: end;
+  margin-top: auto;
+}
+
 .sig-block {
   display: flex;
   flex-direction: column;
@@ -214,32 +224,11 @@
   display: block;
 }
 
-
-
-.border-frame {
-  display: flex;
-  flex-direction: column;
+.sig-line {
+  width: 280px;
+  border-top: 2px solid #1a2a3a;
+  margin: 5px 0;
 }
-
-.footer-signatures {
-  margin-top: auto;           /* 🔥 EMPUJA AL FONDO */
-}
-
-
-
-  .sig-line {
-    width: 280px;
-    border-top: 2px solid #1a2a3a;
-    margin: 5px 0;
-  }
-.empresa-nombre,
-.sucursal-label {
-  text-transform: uppercase;
-}
-
-
-
-
 </style>
 
 <div class="toolbar no-print">
