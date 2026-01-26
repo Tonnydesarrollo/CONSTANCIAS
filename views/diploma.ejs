@@ -178,25 +178,35 @@
   margin: 0;
 }
 
+.recipient-wrapper {
+  width: 90%;          /* 🔒 ancho REAL */
+  margin: 10px auto;
+  text-align: center;
+}
+
 .recipient-name {
   font-family: 'Playfair Display', serif;
   font-style: italic;
   color: #c0392b;
-  font-size: clamp(28px, 3vw, 55px);
+
+  font-size: 55px;     /* tamaño base */
   line-height: 1.1;
+
   border-bottom: 2px solid #1a2a3a;
   padding: 5px 15px;
-  display: inline-block;
-  max-width: 90%;
-  text-transform: uppercase;
+
+  white-space: nowrap; /* 🔒 UNA sola línea */
 }
+
+
+
 
 .course-text {
   width: 90%;
   margin: 5px auto;
   text-align: justify;
   text-align-last: center;
-  font-size: 18px;
+  font-size: 22px;
   line-height: 1.4;
   color: #222;
 }
@@ -210,13 +220,14 @@
   align-items: end;
   margin-top: auto;
 }
-
 .sig-block {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 6px;
+  text-align: center;   /* 👈 CLAVE */
 }
+
 
 .sig-img {
   max-height: 90px;
@@ -284,9 +295,12 @@
       <h1 class="title-constancia">CONSTANCIA</h1>
       <p style="margin:0; font-size:16px;">a:</p>
 
-      <div class="recipient-name"><%= participante %></div>
+      <div class="recipient-wrapper">
+  <div class="recipient-name"><%= participante %></div>
+</div>
 
-      <p style="font-weight:bold; margin:5px 0; font-size:16px;">
+
+      <p style="font-weight:bold; margin:5px 0; font-size:20px;">
         Por su Participación en el curso:
       </p>
 
@@ -295,12 +309,12 @@
         (Primeros auxilios, combate contra incendios, Búsqueda y Rescate, Evacuación).
       </div>
 
-      <div style="margin-top:8px; font-size:15px;">
+      <div style="margin-top:8px; font-size:18px;">
         Celebrado el día <strong><%= fecha.dia %></strong> de
         <strong><%= fecha.mes %></strong> del
         <strong><%= fecha.anio %></strong>. En el municipio de
-          <strong>Navolato</strong>,
-        <strong>Sinaloa</strong>Con una Duracion de <strong>8 horas</strong>.
+          <strong><%= ubicacion.municipio %></strong>,
+        <strong><%= ubicacion.estado %></strong> Con una Duracion de <strong>8 horas</strong>.
 
       </div>
     </div>

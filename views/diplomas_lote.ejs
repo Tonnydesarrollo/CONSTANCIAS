@@ -44,6 +44,35 @@
   <% } %>
 
 <% }) %>
+<script>
+window.onload = () => {
+  requestAnimationFrame(() => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    document.querySelectorAll('.recipient-name').forEach(el => {
+      const style = getComputedStyle(el);
+
+      // 🔒 FORZAMOS ancho real
+      const maxWidth = el.getBoundingClientRect().width;
+
+      let size = 55;
+      const min = 22;
+
+      while (size > min) {
+        ctx.font = `${style.fontStyle} ${style.fontWeight} ${size}px ${style.fontFamily}`;
+        const textWidth = ctx.measureText(el.textContent).width;
+
+        if (textWidth <= maxWidth) break;
+        size--;
+      }
+
+      el.style.fontSize = size + 'px';
+    });
+  });
+};
+</script>
+
 
 </body>
 </html>

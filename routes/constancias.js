@@ -2,15 +2,19 @@ import express from "express";
 import { obtenerSucursalCompleta } from "../services/sucursal.service.js";
 import { obtenerCapacitadores } from "../services/empleados.service.js";
 import { obtenerEmpresaPorId } from "../services/empresa.service.js";
+import {
+  mapaMunicipios,
+  mapaEstados
+} from "../services/ubicacion.service.js";
 
 const router = express.Router();
-async function obtenerLogoEmpresaUrl(logoPath) {
-  if (!logoPath) {
-    console.warn("⚠️ logoPath vacío");
-    return "";
-  }
 
-  // Si ya es URL, usar directo
+/* ======================================================
+   LOGO EMPRESA
+====================================================== */
+async function obtenerLogoEmpresaUrl(logoPath) {
+  if (!logoPath) return "";
+
   if (logoPath.startsWith("http")) {
     return logoPath;
   }
@@ -42,81 +46,64 @@ async function obtenerLogoEmpresaUrl(logoPath) {
   }
 }
 
-
-
-/**
- * Convierte fechas de AppSheet a formato válido para <input type="date">
- * Soporta:
- * - YYYY-MM-DD
- * - YYYY-MM-DDTHH:mm:ss
- * - DD/MM/YYYY
- */
+/* ======================================================
+   FECHA
+====================================================== */
 function normalizarFechaParaInput(fecha) {
   if (!fecha) return "";
 
   const f = String(fecha).trim();
 
-  // Caso ISO: YYYY-MM-DD o YYYY-MM-DDTHH:mm:ss
   if (/^\d{4}-\d{2}-\d{2}/.test(f)) {
     return f.slice(0, 10);
   }
 
-  // Caso latino: DD/MM/YYYY
   if (/^\d{2}\/\d{2}\/\d{4}$/.test(f)) {
     let [d, m, y] = f.split("/").map(Number);
+    if (m > 12 && d <= 12) [d, m] = [m, d];
 
-    // 🔐 Corrección segura
-    if (m > 12 && d <= 12) {
-      // venía como MM/DD/YYYY
-      [d, m] = [m, d];
-    }
-
-    // Validación final
-    if (m >= 1 && m <= 12 && d >= 1 && d <= 31) {
-      return `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-    }
+    return `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
   }
 
-  console.warn("⚠️ Fecha no válida:", fecha);
   return "";
 }
+
+/* ======================================================
+   POST /generar
+====================================================== */
 router.post("/generar", async (req, res) => {
   try {
-    console.log("BODY:", req.body);
+    const { sucursalId, capacitadorId, fecha, participantes } = req.body;
 
-    const {
-      sucursalId,
-      capacitadorId,
-      fecha,
-      participantes
-    } = req.body;
-
+    /* ================= SUCURSAL ================= */
     const sucursalData = await obtenerSucursalCompleta(sucursalId);
-    const empresaId = sucursalData["ID EMPRESA"];
-const empresaData = empresaId
-  ? await obtenerEmpresaPorId(empresaId)
-  : null;
-
-if (!empresaData) {
-  return res.status(404).json({ error: "Empresa no encontrada" });
-}
-
     if (!sucursalData) {
       return res.status(404).json({ error: "Sucursal no encontrada" });
     }
-    console.log("🏢 EMPRESA:", empresaData["RAZON SOCIAL"]);
-console.log("🖼️ LOGO RAW:", empresaData.LOGO);
 
+    /* ================= MAPAS ================= */
+    const municipiosMap = await mapaMunicipios();
+    const estadosMap = await mapaEstados();
 
-  const logoEmpresaUrl = await obtenerLogoEmpresaUrl(empresaData.LOGO);
+    const municipio =
+      municipiosMap[String(sucursalData.MUNICIPIO)]?.nombre || "";
 
-const empresa = {
-  nombre: empresaData["RAZON SOCIAL"] || empresaData.NOMBRE || "",
-  logoUrl: logoEmpresaUrl
-};
+    const estado =
+      estadosMap[String(sucursalData.ESTADO)]?.nombre || "";
 
+    /* ================= EMPRESA ================= */
+    const empresaId = sucursalData["ID EMPRESA"];
+    const empresaData = empresaId
+      ? await obtenerEmpresaPorId(empresaId)
+      : null;
 
+    if (!empresaData) {
+      return res.status(404).json({ error: "Empresa no encontrada" });
+    }
 
+    const logoEmpresaUrl = await obtenerLogoEmpresaUrl(empresaData.LOGO);
+
+    /* ================= CAPACITADOR ================= */
     const capacitadores = await obtenerCapacitadores();
     const capacitadorData = capacitadores.find(
       c => String(c.ID) === String(capacitadorId)
@@ -126,42 +113,36 @@ const empresa = {
       return res.status(404).json({ error: "Capacitador no encontrado" });
     }
 
+    /* ================= FECHA ================= */
     const [y, m, d] = fecha.split("-");
     const meses = [
       "ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO",
       "JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"
     ];
 
-    const fechaObj = {
-      dia: d,
-      mes: meses[Number(m) - 1],
-      anio: y
-    };
- console.log("RENDER → diplomas_lote.ejs");
- console.log("🖼️ LOGO EMPRESA FINAL:", logoEmpresaUrl);
-
-   res.render(
-  "diplomas_lote",
-  {
-    empresa,
-    sucursalLabel: sucursalData.LABEL2,
-    logoEmpresa: logoEmpresaUrl,
-    capacitador: {
-      nombre: capacitadorData.NOMBRE,
-      firmaUrl: capacitadorData.FIRMA || ""
-    },
-    fecha: fechaObj,
-    participantes
-  },
-  (err, html) => {
-    if (err) {
-      console.error("❌ ERROR EJS:", err);
-      return res.status(500).send("Error renderizando diplomas");
-    }
-    res.send(html);
-  }
-);
-
+    /* ================= RENDER ================= */
+    res.render("diplomas_lote", {
+      empresa: {
+        nombre: empresaData["RAZON SOCIAL"] || empresaData.NOMBRE || "",
+        logoUrl: logoEmpresaUrl
+      },
+      sucursalLabel: sucursalData.LABEL2,
+      logoEmpresa: logoEmpresaUrl,
+      capacitador: {
+        nombre: capacitadorData.NOMBRE,
+        firmaUrl: capacitadorData.FIRMA || ""
+      },
+      fecha: {
+        dia: d,
+        mes: meses[Number(m) - 1],
+        anio: y
+      },
+      participantes,
+      ubicacion: {
+        municipio,
+        estado
+      }
+    });
 
   } catch (err) {
     console.error(err);
@@ -169,55 +150,24 @@ const empresa = {
   }
 });
 
-
-
+/* ======================================================
+   GET /:id/HTML
+====================================================== */
 router.get("/:id/HTML", async (req, res) => {
-
   try {
-    const { id } = req.params;
-
-    // ================= SUCURSAL =================
-    const sucursal = await obtenerSucursalCompleta(id);
+    const sucursal = await obtenerSucursalCompleta(req.params.id);
     if (!sucursal) {
       return res.status(404).json({ error: "Sucursal no encontrada" });
     }
-console.log("CLAVES DE SUCURSAL:", Object.keys(sucursal));
 
-    // ================= CAPACITADORES =================
     const capacitadores = await obtenerCapacitadores();
-
-    // Capacitador default desde SUCURSALES.CAPACITADORES
-    let capacitadorDefaultId = null;
-
-    if (sucursal.CAPACITADORES) {
-      if (Array.isArray(sucursal.CAPACITADORES)) {
-        capacitadorDefaultId = sucursal.CAPACITADORES[0];
-      } else if (typeof sucursal.CAPACITADORES === "string") {
-        capacitadorDefaultId = sucursal.CAPACITADORES
-          .split(",")
-          .map(v => v.trim())
-          .filter(Boolean)[0] || null;
-      }
-    }
-
-    const capacitadorSeleccionado =
-      capacitadorDefaultId
-        ? capacitadores.find(c => String(c.ID) === String(capacitadorDefaultId)) || null
-        : null;
-
-    // ================= FECHA =================
-    // Nombre exacto del campo en AppSheet: "FECHA CAPACITACION"
-    const fechaCapRaw = sucursal["FECHA CAPACITACION"] || "";
-    const fechaCap = normalizarFechaParaInput(fechaCapRaw);
-
-    // ================= RENDER =================
-    
-console.log("FECHA NORMALIZADA:", fechaCap);
+    const fechaCap = normalizarFechaParaInput(
+      sucursal["FECHA CAPACITACION"]
+    );
 
     res.render("constancia_form", {
       sucursal,
       capacitadores,
-      capacitadorSeleccionado,
       fecha: fechaCap
     });
 
