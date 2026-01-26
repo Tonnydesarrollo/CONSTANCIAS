@@ -5,22 +5,44 @@ import { obtenerEmpresaPorId } from "../services/empresa.service.js";
 
 const router = express.Router();
 async function obtenerLogoEmpresaUrl(logoPath) {
-  if (!logoPath) return "";
-
-  const res = await fetch("http://localhost:3000/drive/logo-url", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ logoPath })
-  });
-
-  if (!res.ok) {
-    console.warn("No se pudo obtener logo empresa");
+  if (!logoPath) {
+    console.warn("⚠️ logoPath vacío");
     return "";
   }
 
-  const data = await res.json();
-  return data.url || "";
+  // Si ya es URL, usar directo
+  if (logoPath.startsWith("http")) {
+    return logoPath;
+  }
+
+  const baseUrl = process.env.DRIVE_API_BASE;
+  if (!baseUrl) {
+    console.error("❌ DRIVE_API_BASE no definido");
+    return "";
+  }
+
+  try {
+    const res = await fetch(`${baseUrl}/drive/logo-url`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ logoPath })
+    });
+
+    if (!res.ok) {
+      console.warn("⚠️ Drive error:", res.status);
+      return "";
+    }
+
+    const data = await res.json();
+    return data?.url || "";
+
+  } catch (e) {
+    console.error("❌ Error llamando Drive:", e.message);
+    return "";
+  }
 }
+
+
 
 /**
  * Convierte fechas de AppSheet a formato válido para <input type="date">
@@ -82,6 +104,9 @@ if (!empresaData) {
     if (!sucursalData) {
       return res.status(404).json({ error: "Sucursal no encontrada" });
     }
+    console.log("🏢 EMPRESA:", empresaData["RAZON SOCIAL"]);
+console.log("🖼️ LOGO RAW:", empresaData.LOGO);
+
 
   const logoEmpresaUrl = await obtenerLogoEmpresaUrl(empresaData.LOGO);
 
@@ -113,12 +138,14 @@ const empresa = {
       anio: y
     };
  console.log("RENDER → diplomas_lote.ejs");
+ console.log("🖼️ LOGO EMPRESA FINAL:", logoEmpresaUrl);
+
    res.render(
   "diplomas_lote",
   {
     empresa,
     sucursalLabel: sucursalData.LABEL2,
-    logoEmpresa: empresa.logoUrl,
+    logoEmpresa: logoEmpresaUrl,
     capacitador: {
       nombre: capacitadorData.NOMBRE,
       firmaUrl: capacitadorData.FIRMA || ""

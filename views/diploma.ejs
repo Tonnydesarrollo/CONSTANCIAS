@@ -116,7 +116,6 @@
   max-height: 100%;
   object-fit: contain;
 }
-
 .logo-cliente-img {
   max-width: 250px;
   max-height: 120px;
@@ -253,7 +252,31 @@
 
 
 
-      <img src="<%= logoEmpresa %>&sz=200" class="logo-cliente-img" alt="Logo Cliente">
+ <div class="logo-cliente-wrapper">
+
+ <img
+  src="<%= logoEmpresa %>"
+  class="logo-cliente-img"
+  alt="Logo Cliente"
+  onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+/>
+
+<div
+  style="display:none; font-size:11px; color:red; word-break:break-all; max-width:250px;"
+>
+  <%= logoEmpresa %>
+</div>
+
+
+  <div class="logo-fallback">
+    <%= empresa.nombre %>
+  </div>
+
+</div>
+
+
+
+
     </div>
 
     <div style="text-align:center; flex-grow:1; display:flex; flex-direction:column; justify-content:center;">
