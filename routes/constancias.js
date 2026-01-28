@@ -2,7 +2,6 @@ import express from "express";
 import { obtenerSucursalCompleta } from "../services/sucursal.service.js";
 import { obtenerCapacitadores } from "../services/empleados.service.js";
 import { obtenerEmpresaPorId } from "../services/empresa.service.js";
-import { getCapacitacionById } from "../services/capacitaciones.service.js";
 import {
   mapaMunicipios,
   mapaEstados
@@ -236,65 +235,6 @@ router.get("/:id/HTML", async (req, res) => {
 
   } catch (err) {
     console.error("ERROR /:id/HTML", err);
-    res.status(500).json({ error: "Error interno" });
-  }
-});
-
-/* ======================================================
-   GET /capacitaciones/:id/HTML
-====================================================== */
-router.get("/capacitaciones/:id/HTML", async (req, res) => {
-  try {
-    const capacitacion = await getCapacitacionById(req.params.id);
-    if (!capacitacion) {
-      return res.status(404).json({ error: "Capacitación no encontrada" });
-    }
-
-    const sucursalesRaw = obtenerValorPorClaves(capacitacion, [
-      "sucursales",
-      "SUCURSALES",
-      "Sucursales",
-      "SUCURSAL",
-      "Sucursal",
-      "IDS SUCURSALES",
-      "IDs Sucursales",
-      "ID SUCURSAL"
-    ]);
-    const sucursalIds = normalizarEnumList(sucursalesRaw);
-    const sucursalesData = await Promise.all(
-      sucursalIds.map(id => obtenerSucursalCompleta(id))
-    );
-
-    const sucursales = sucursalesData
-      .filter(Boolean)
-      .map(sucursal => ({
-        id: sucursal.ID,
-        label: sucursal.LABEL2 || sucursal.LABEL || "",
-        driveLink: obtenerDriveLink(sucursal.DRIVE || "")
-      }));
-
-    if (!sucursales.length) {
-      return res.status(404).json({ error: "Sucursales no encontradas" });
-    }
-
-    const capacitadores = await obtenerCapacitadores();
-    const fechaCapRaw = obtenerValorPorClaves(capacitacion, [
-      "fechaCapacitacion",
-      "FECHA CAPACITACION",
-      "Fecha Capacitacion",
-      "FECHA",
-      "Fecha"
-    ]);
-    const fechaCap = normalizarFechaParaInput(fechaCapRaw);
-
-    res.render("constancia_form_capacitacion", {
-      capacitacion,
-      sucursales,
-      fecha: fechaCap,
-      capacitadores
-    });
-  } catch (err) {
-    console.error("ERROR /capacitaciones/:id/HTML", err);
     res.status(500).json({ error: "Error interno" });
   }
 });
