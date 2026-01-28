@@ -1,0 +1,58 @@
+﻿diff --git a/services/capacitaciones.service.js b/services/capacitaciones.service.js
+index ced4c3e303899bc2b3367ba700015e80fc3bebf9..0a2319652957acc42355bfb0d21102e498acfa04 100644
+--- a/services/capacitaciones.service.js
++++ b/services/capacitaciones.service.js
+@@ -1,48 +1,53 @@
+ /**
+  * Servicio de Capacitaciones
+  * Tabla: capacitaciones (AppSheet)
+  */
+ 
+ import { leerTablaAppSheet } from "./appsheet.js";
+ 
+ /**
+  * Obtener capacitación por ID
+  * @param {string} id
+  * @returns {Promise<Object|null>}
+  */
+ export async function getCapacitacionById(id) {
+   if (!id) {
+     throw new Error("ID de capacitación es requerido");
+   }
+ 
++  const idValue = String(id).trim();
++  const selector = /^\d+$/.test(idValue)
++    ? `[ID] = ${Number(idValue)}`
++    : `[ID] = '${idValue}'`;
++
+   const body = {
+     Action: "Find",
+     Properties: {
+       Locale: "es-MX",
+       Timezone: "America/Mexico_City",
+-      Selector: `[ID] = '${id}'`
++      Selector: selector
+     }
+   };
+ 
+   const response = await leerTablaAppSheet("capacitaciones", body);
+ 
+   if (!response || response.length === 0) {
+     return null;
+   }
+ 
+   return normalizarCapacitacion(response[0]);
+ }
+ 
+ /**
+  * Obtener todas las capacitaciones
+  * @returns {Promise<Array>}
+  */
+ export async function getCapacitaciones() {
+   const body = {
+     Action: "Find",
+     Properties: {
+       Locale: "es-MX",
+       Timezone: "America/Mexico_City"
+     }
+   };
