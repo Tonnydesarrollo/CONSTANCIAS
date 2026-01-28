@@ -102,6 +102,18 @@ function obtenerDriveLink(driveData) {
   return "";
 }
 
+function obtenerValorPorClaves(obj, claves) {
+  if (!obj) return undefined;
+
+  for (const clave of claves) {
+    if (obj[clave] !== undefined && obj[clave] !== null) {
+      return obj[clave];
+    }
+  }
+
+  return undefined;
+}
+
 /* ======================================================
    POST /generar
 ====================================================== */
@@ -221,7 +233,17 @@ router.get("/capacitaciones/:id/HTML", async (req, res) => {
       return res.status(404).json({ error: "Capacitación no encontrada" });
     }
 
-    const sucursalIds = normalizarEnumList(capacitacion.sucursales);
+    const sucursalesRaw = obtenerValorPorClaves(capacitacion, [
+      "sucursales",
+      "SUCURSALES",
+      "Sucursales",
+      "SUCURSAL",
+      "Sucursal",
+      "IDS SUCURSALES",
+      "IDs Sucursales",
+      "ID SUCURSAL"
+    ]);
+    const sucursalIds = normalizarEnumList(sucursalesRaw);
     const sucursalesData = await Promise.all(
       sucursalIds.map(id => obtenerSucursalCompleta(id))
     );
@@ -239,9 +261,14 @@ router.get("/capacitaciones/:id/HTML", async (req, res) => {
     }
 
     const capacitadores = await obtenerCapacitadores();
-    const fechaCap = normalizarFechaParaInput(
-      capacitacion.fechaCapacitacion
-    );
+    const fechaCapRaw = obtenerValorPorClaves(capacitacion, [
+      "fechaCapacitacion",
+      "FECHA CAPACITACION",
+      "Fecha Capacitacion",
+      "FECHA",
+      "Fecha"
+    ]);
+    const fechaCap = normalizarFechaParaInput(fechaCapRaw);
 
     res.render("constancia_form_capacitacion", {
       capacitacion,
