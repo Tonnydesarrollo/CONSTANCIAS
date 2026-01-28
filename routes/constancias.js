@@ -2,6 +2,7 @@ import express from "express";
 import { obtenerSucursalCompleta } from "../services/sucursal.service.js";
 import { obtenerCapacitadores } from "../services/empleados.service.js";
 import { obtenerEmpresaPorId } from "../services/empresa.service.js";
+import { getCapacitacionById } from "../services/capacitaciones.service.js";
 import {
   mapaMunicipios,
   mapaEstados
@@ -63,6 +64,39 @@ function normalizarFechaParaInput(fecha) {
     if (m > 12 && d <= 12) [d, m] = [m, d];
 
     return `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+  }
+
+  return "";
+}
+
+function normalizarEnumList(valor) {
+  if (!valor) return [];
+  if (Array.isArray(valor)) return valor.map(v => String(v).trim()).filter(Boolean);
+  return String(valor)
+    .split(",")
+    .map(v => v.trim())
+    .filter(Boolean);
+}
+
+function obtenerDriveLink(driveData) {
+  if (!driveData) return "";
+
+  if (typeof driveData === "string") {
+    const trimmed = driveData.trim();
+    if (!trimmed) return "";
+    if (trimmed.startsWith("{")) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        return parsed.Url || parsed.url || "";
+      } catch (e) {
+        return "";
+      }
+    }
+    return trimmed;
+  }
+
+  if (typeof driveData === "object") {
+    return driveData.Url || driveData.url || "";
   }
 
   return "";
@@ -173,6 +207,50 @@ router.get("/:id/HTML", async (req, res) => {
 
   } catch (err) {
     console.error("ERROR /:id/HTML", err);
+    res.status(500).json({ error: "Error interno" });
+  }
+});
+
+/* ======================================================
+   GET /capacitaciones/:id/HTML
+====================================================== */
+router.get("/capacitaciones/:id/HTML", async (req, res) => {
+  try {
+    const capacitacion = await getCapacitacionById(req.params.id);
+    if (!capacitacion) {
+      return res.status(404).json({ error: "Capacitación no encontrada" });
+    }
+
+    const sucursalIds = normalizarEnumList(capacitacion.sucursales);
+    const sucursalesData = await Promise.all(
+      sucursalIds.map(id => obtenerSucursalCompleta(id))
+    );
+
+    const sucursales = sucursalesData
+      .filter(Boolean)
+      .map(sucursal => ({
+        id: sucursal.ID,
+        label: sucursal.LABEL2 || sucursal.LABEL || "",
+        driveLink: obtenerDriveLink(sucursal.DRIVE || "")
+      }));
+
+    if (!sucursales.length) {
+      return res.status(404).json({ error: "Sucursales no encontradas" });
+    }
+
+    const capacitadores = await obtenerCapacitadores();
+    const fechaCap = normalizarFechaParaInput(
+      capacitacion.fechaCapacitacion
+    );
+
+    res.render("constancia_form_capacitacion", {
+      capacitacion,
+      sucursales,
+      fecha: fechaCap,
+      capacitadores
+    });
+  } catch (err) {
+    console.error("ERROR /capacitaciones/:id/HTML", err);
     res.status(500).json({ error: "Error interno" });
   }
 });

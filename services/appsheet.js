@@ -1,4 +1,4 @@
-export async function leerTablaAppSheet(nombreTabla) {
+export async function leerTablaAppSheet(nombreTabla, bodyOverride = null) {
   const APP_ID  = process.env.APPSHEET_APP_ID;
   const API_KEY = process.env.APPSHEET_API_KEY;
 
@@ -9,7 +9,7 @@ export async function leerTablaAppSheet(nombreTabla) {
   const url =
     `https://api.appsheet.com/api/v2/apps/${APP_ID}/tables/${encodeURIComponent(nombreTabla)}/Action`;
 
-  const body = {
+  const body = bodyOverride || {
     Action: "Find",
     Properties: {
       Locale: "es-MX",
