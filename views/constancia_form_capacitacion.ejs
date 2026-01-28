@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Constancias de Capacitación | Desarrollo EG</title>
+
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --accent: #d97706;
+      --primary-hover: #172554;
+      --danger: #ef4444;
+      --bg: #f1f5f9;
+      --text: #0f172a;
+      --border: #cbd5e1;
+    }
+
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 20px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 450px 1fr;
+      gap: 20px;
+      max-width: 1600px;
+      margin: auto;
+    }
+
+    @media (max-width: 1200px) {
+      .layout { grid-template-columns: 1fr; }
+      .preview-panel { height: 800px; }
+    }
+
+    .container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .header-institucional {
+      background: linear-gradient(135deg, #1e3a8a 0%, #172554 100%);
+      padding: 20px;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo-img { height: 60px; }
+
+    .content-padding { padding: 25px; }
+    .grupo { margin-bottom: 20px; }
+
+    label {
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: block;
+      color: #64748b;
+    }
+
+    h2 { margin: 0; font-size: 1.2rem; color: var(--primary); }
+
+    select, input[type="date"], input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.95rem;
+      box-sizing: border-box;
+    }
+
+    .table-container {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow-y: auto;
+      max-height: 300px;
+    }
+
+    table { width: 100%; border-collapse: collapse; }
+    table th { background: #f8fafc; padding: 10px; font-size: 0.75rem; text-align: left; }
+    table td { padding: 8px; border-top: 1px solid var(--border); }
+
+    .btn-add {
+      background: #f1f5f9;
+      color: var(--primary);
+      border: 1px dashed var(--primary);
+      width: 100%;
+      margin-top: 10px;
+      padding: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      border-radius: 6px;
+    }
+
+    .btn-delete { background: #fee2e2; color: var(--danger); width: 30px; height: 30px; border-radius: 4px; cursor: pointer; border: none; }
+
+    .acciones { display: flex; gap: 15px; margin-top: 30px; }
+    .btn-primary { background: var(--primary); color: white; flex: 2; font-size: 1rem; padding: 15px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    .btn-secondary { background: #e2e8f0; flex: 1; padding: 15px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+
+    /* PREVIEW PANEL */
+    .preview-panel {
+      background: #334155;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,.1);
+    }
+
+    .preview-header {
+      padding: 15px;
+      background: #1e293b;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #previewFrame { flex: 1; border: none; background: #334155; width: 100%; }
+
+    #loader-overlay {
+      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8);
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+      color: white; z-index: 9999;
+    }
+    .spinner { width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.1); border-top: 5px solid white; border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  .btn-drive {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #ffffff;
+  color: #1e3a8a; /* Color primary de tu root */
+  border: 2px solid #1e3a8a;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.btn-drive:hover {
+  background-color: #1e3a8a;
+  color: #ffffff;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.btn-drive img {
+  filter: drop-shadow(0px 1px 1px rgba(0,0,0,0.2));
+}
+  </style>
+</head>
+<body>
+
+<div id="loader-overlay">
+  <div class="spinner"></div>
+  <p id="loader-text" style="margin-top: 15px;">Procesando...</p>
+</div>
+
+<div class="layout">
+  <div class="container">
+    <div class="header-institucional">
+      <img src="/img/Logo sin fondo 3D HD.png" class="logo-img" alt="Logo">
+      <div>
+        <h1 style="margin:0; font-size: 1.4rem;">Gestión de Constancias</h1>
+        <small>Desarrollo EG Consultores</small>
+      </div>
+    </div>
+
+    <div class="content-padding">
+      <div class="grupo">
+        <label>Unidad / Sucursal</label>
+        <select id="sucursal" onchange="actualizarSucursal()">
+          <% sucursales.forEach((s, idx) => { %>
+            <option value="<%= s.id %>" data-label="<%= s.label %>" data-drive="<%= s.driveLink %>" <%= idx === 0 ? "selected" : "" %>><%= s.label %></option>
+          <% }) %>
+        </select>
+
+        <h2 id="sucursalLabel" style="margin-top: 12px;"><%= sucursales[0].label %></h2>
+
+        <div id="driveContainer">
+          <% if (sucursales[0].driveLink) { %>
+            <a href="<%= sucursales[0].driveLink %>" target="_blank" class="btn-drive" id="driveLink">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg" alt="Drive" style="width:20px; height:20px;">
+              Abrir Carpeta de Evidencias
+            </a>
+          <% } else { %>
+            <small id="driveEmpty" style="color: #94a3b8; font-style: italic;">Carpeta no configurada</small>
+          <% } %>
+        </div>
+      </div>
+
+      <div class="grupo">
+        <label>Capacitador / Consultor</label>
+        <select id="capacitador">
+          <option value="" disabled selected>-- Seleccione --</option>
+          <% capacitadores.forEach(c => { %>
+            <option value="<%= c.ID %>"><%= c.NOMBRE %></option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div class="grupo">
+        <label>Fecha de Emisión</label>
+        <input type="date" id="fecha" value="<%= fecha %>">
+      </div>
+
+      <div class="grupo">
+        <label>Participantes</label>
+        <div class="table-container">
+          <table id="tablaParticipantes">
+            <tbody>
+              <tr>
+                <td><input type="text" name="nombres[]" placeholder="Nombre completo"></td>
+                <td style="width: 40px;"><button class="btn-delete" onclick="eliminarFila(this)">✕</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <button class="btn-add" onclick="agregarFila()">+ Añadir manualmente</button>
+      </div>
+
+      <div class="grupo">
+        <label>Importación Excel</label>
+        <input type="file" id="archivo" accept=".xlsx,.xls,.csv">
+      </div>
+
+      <div class="acciones">
+        <button class="btn-secondary" onclick="exportarExcel()">📥 Respaldar</button>
+        <button class="btn-primary" onclick="generarConstancias()">🚀 Generar y Visualizar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="preview-panel">
+    <div class="preview-header">
+      <span>Vista Previa Real (Hoja Letter)</span>
+      <button onclick="imprimirIframe()" style="background:#e74c3c; color:white; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:bold; border:none;">
+        🖨️ Imprimir / Guardar PDF
+      </button>
+    </div>
+    <iframe id="previewFrame" name="previewFrame"></iframe>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script>
+  function showLoader(msg) {
+    document.getElementById("loader-text").innerText = msg;
+    document.getElementById("loader-overlay").style.display = "flex";
+  }
+  function hideLoader() { document.getElementById("loader-overlay").style.display = "none"; }
+
+  function actualizarSucursal() {
+    const select = document.getElementById("sucursal");
+    const option = select.options[select.selectedIndex];
+    const label = option.dataset.label || "";
+    const drive = option.dataset.drive || "";
+
+    document.getElementById("sucursalLabel").innerText = label || "";
+
+    const container = document.getElementById("driveContainer");
+    container.innerHTML = "";
+
+    if (drive) {
+      const link = document.createElement("a");
+      link.href = drive;
+      link.target = "_blank";
+      link.className = "btn-drive";
+      link.id = "driveLink";
+      link.innerHTML = '<img src="https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg" alt="Drive" style="width:20px; height:20px;">Abrir Carpeta de Evidencias';
+      container.appendChild(link);
+    } else {
+      const small = document.createElement("small");
+      small.id = "driveEmpty";
+      small.style.color = "#94a3b8";
+      small.style.fontStyle = "italic";
+      small.innerText = "Carpeta no configurada";
+      container.appendChild(small);
+    }
+  }
+
+  function agregarFila(valor = "") {
+    const tbody = document.querySelector("#tablaParticipantes tbody");
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td><input type="text" name="nombres[]" value="${valor}" placeholder="Nombre Completo"></td>
+                    <td><button class="btn-delete" onclick="eliminarFila(this)">✕</button></td>`;
+    tbody.appendChild(tr);
+  }
+
+  function eliminarFila(btn) {
+    const filas = document.querySelectorAll("#tablaParticipantes tbody tr");
+    if (filas.length > 1) btn.closest("tr").remove();
+  }
+
+  function obtenerNombres() {
+    return [...document.querySelectorAll('input[name="nombres[]"]')].map(i => i.value.trim()).filter(Boolean);
+  }
+
+  function imprimirIframe() {
+    const iframe = document.getElementById('previewFrame');
+    if (iframe.contentWindow) {
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+    }
+  }
+
+  function generarConstancias() {
+    const participantes = obtenerNombres();
+    const capacitadorId = document.getElementById("capacitador").value;
+    const fecha = document.getElementById("fecha").value;
+    const sucursalId = document.getElementById("sucursal").value;
+
+    if (!participantes.length || !capacitadorId || !fecha || !sucursalId) return alert("Complete todos los campos");
+
+    showLoader("Sincronizando dimensiones...");
+
+    fetch("/constancias/generar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sucursalId, capacitadorId, fecha, participantes })
+    })
+    .then(r => r.text())
+    .then(html => {
+        const iframe = document.getElementById("previewFrame");
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+        doc.open();
+        // IMPORTANTE: Limpiamos espacios al insertar el HTML
+        doc.write(html.replace(/>\s+</g, '><'));
+        doc.close();
+
+        iframe.onload = function() {
+            const win = iframe.contentWindow;
+            const style = win.document.createElement('style');
+
+            const diplomaWidth = 1056; // 11in * 96dpi
+            const scale = (iframe.offsetWidth / diplomaWidth) * 0.95;
+
+            style.innerHTML = `
+                @media screen {
+                    body {
+                        background: #334155 !important;
+                        margin: 0 !important;
+                        padding: 40px 0 !important;
+                        display: flex !important;
+                        flex-direction: column !important;
+                        align-items: center !important;
+                    }
+                    .diploma-canvas {
+                        transform: scale(${scale});
+                        transform-origin: top center;
+                        /* Compensamos el espacio que deja el transform scale */
+                        margin-bottom: -${813 * (1 - scale)}px !important;
+                        box-shadow: 0 20px 50px rgba(0,0,0,0.5) !important;
+                    }
+                }
+            `;
+            win.document.head.appendChild(style);
+        };
+    })
+    .catch(err => alert("Error al conectar con el servidor"))
+    .finally(hideLoader);
+  }
+
+  // Manejo de Excel
+  document.getElementById("archivo").addEventListener("change", e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = evt => {
+      const data = new Uint8Array(evt.target.result);
+      const workbook = XLSX.read(data, { type: "array" });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+      const tbody = document.querySelector("#tablaParticipantes tbody");
+      tbody.innerHTML = "";
+      rows.forEach((r, idx) => {
+        const nombre = (r[0] || "").toString().trim();
+        if (!nombre || (idx === 0 && /nombre|lista/i.test(nombre))) return;
+        agregarFila(nombre);
+      });
+    };
+    reader.readAsArrayBuffer(file);
+  });
+
+  function exportarExcel() {
+    const nombres = obtenerNombres();
+    if (!nombres.length) return alert("No hay datos");
+    const ws = XLSX.utils.aoa_to_sheet([["Participante"], ...nombres.map(n => [n])]);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Lista");
+    XLSX.writeFile(wb, `Lista_${new Date().toISOString().slice(0,10)}.xlsx`);
+  }
+</script>
+</body>
+</html>
