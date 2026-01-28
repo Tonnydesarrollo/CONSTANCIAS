@@ -2,7 +2,6 @@ import express from "express";
 import { obtenerSucursalCompleta } from "../services/sucursal.service.js";
 import { obtenerCapacitadores } from "../services/empleados.service.js";
 import { obtenerEmpresaPorId } from "../services/empresa.service.js";
-import { getCapacitacionById } from "../services/capacitaciones.service.js";
 import {
   mapaMunicipios,
   mapaEstados
@@ -69,54 +68,6 @@ function normalizarFechaParaInput(fecha) {
   return "";
 }
 
-function normalizarEnumList(valor) {
-  if (!valor) return [];
-  if (Array.isArray(valor)) return valor.map(v => String(v).trim()).filter(Boolean);
-  return String(valor)
-    .split(",")
-    .map(v => v.trim())
-    .filter(Boolean);
-}
-
-function obtenerDriveLink(driveData) {
-  if (!driveData) return "";
-
-  if (typeof driveData === "string") {
-    const trimmed = driveData.trim();
-    if (!trimmed) return "";
-    if (trimmed.startsWith("{")) {
-      try {
-        const parsed = JSON.parse(trimmed);
-        return parsed.Url || parsed.url || "";
-      } catch (e) {
-        return "";
-      }
-    }
-    return trimmed;
-  }
-
-  if (typeof driveData === "object") {
-    return driveData.Url || driveData.url || "";
-  }
-
-  return "";
-}
-
-<<<<<<< HEAD
-=======
-function obtenerValorPorClaves(obj, claves) {
-  if (!obj) return undefined;
-
-  for (const clave of claves) {
-    if (obj[clave] !== undefined && obj[clave] !== null) {
-      return obj[clave];
-    }
-  }
-
-  return undefined;
-}
-
->>>>>>> feature/constancias-capacitacion
 /* ======================================================
    POST /generar
 ====================================================== */
@@ -222,75 +173,6 @@ router.get("/:id/HTML", async (req, res) => {
 
   } catch (err) {
     console.error("ERROR /:id/HTML", err);
-    res.status(500).json({ error: "Error interno" });
-  }
-});
-
-/* ======================================================
-   GET /capacitaciones/:id/HTML
-====================================================== */
-router.get("/capacitaciones/:id/HTML", async (req, res) => {
-  try {
-    const capacitacion = await getCapacitacionById(req.params.id);
-    if (!capacitacion) {
-      return res.status(404).json({ error: "Capacitación no encontrada" });
-    }
-
-<<<<<<< HEAD
-    const sucursalIds = normalizarEnumList(capacitacion.sucursales);
-=======
-    const sucursalesRaw = obtenerValorPorClaves(capacitacion, [
-      "sucursales",
-      "SUCURSALES",
-      "Sucursales",
-      "SUCURSAL",
-      "Sucursal",
-      "IDS SUCURSALES",
-      "IDs Sucursales",
-      "ID SUCURSAL"
-    ]);
-    const sucursalIds = normalizarEnumList(sucursalesRaw);
->>>>>>> feature/constancias-capacitacion
-    const sucursalesData = await Promise.all(
-      sucursalIds.map(id => obtenerSucursalCompleta(id))
-    );
-
-    const sucursales = sucursalesData
-      .filter(Boolean)
-      .map(sucursal => ({
-        id: sucursal.ID,
-        label: sucursal.LABEL2 || sucursal.LABEL || "",
-        driveLink: obtenerDriveLink(sucursal.DRIVE || "")
-      }));
-
-    if (!sucursales.length) {
-      return res.status(404).json({ error: "Sucursales no encontradas" });
-    }
-
-    const capacitadores = await obtenerCapacitadores();
-<<<<<<< HEAD
-    const fechaCap = normalizarFechaParaInput(
-      capacitacion.fechaCapacitacion
-    );
-=======
-    const fechaCapRaw = obtenerValorPorClaves(capacitacion, [
-      "fechaCapacitacion",
-      "FECHA CAPACITACION",
-      "Fecha Capacitacion",
-      "FECHA",
-      "Fecha"
-    ]);
-    const fechaCap = normalizarFechaParaInput(fechaCapRaw);
->>>>>>> feature/constancias-capacitacion
-
-    res.render("constancia_form_capacitacion", {
-      capacitacion,
-      sucursales,
-      fecha: fechaCap,
-      capacitadores
-    });
-  } catch (err) {
-    console.error("ERROR /capacitaciones/:id/HTML", err);
     res.status(500).json({ error: "Error interno" });
   }
 });
