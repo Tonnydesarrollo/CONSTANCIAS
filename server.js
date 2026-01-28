@@ -38,6 +38,7 @@ app.get("/health", (_, res) => {
 
 // ================= ROUTES =================
 app.use("/constancias", constanciasRoutes);
+app.use("/CONSTANCIAS", constanciasRoutes);
 
 // ================= START =================
 const PORT = process.env.PORT || 3003;
