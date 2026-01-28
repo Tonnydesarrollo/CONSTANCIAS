@@ -71,9 +71,26 @@ function normalizarFechaParaInput(fecha) {
 
 function normalizarEnumList(valor) {
   if (!valor) return [];
-  if (Array.isArray(valor)) return valor.map(v => String(v).trim()).filter(Boolean);
-  return String(valor)
-    .split(",")
+  if (Array.isArray(valor)) {
+    return valor.map(v => String(v).trim()).filter(Boolean);
+  }
+
+  const raw = String(valor).trim();
+  if (!raw) return [];
+
+  if (raw.startsWith("[")) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        return parsed.map(v => String(v).trim()).filter(Boolean);
+      }
+    } catch (e) {
+      // fall through to separator-based parsing
+    }
+  }
+
+  return raw
+    .split(/[,;\n]+/)
     .map(v => v.trim())
     .filter(Boolean);
 }
@@ -100,6 +117,18 @@ function obtenerDriveLink(driveData) {
   }
 
   return "";
+}
+
+function obtenerValorPorClaves(obj, claves) {
+  if (!obj) return undefined;
+
+  for (const clave of claves) {
+    if (obj[clave] !== undefined && obj[clave] !== null) {
+      return obj[clave];
+    }
+  }
+
+  return undefined;
 }
 
 /* ======================================================
@@ -221,7 +250,17 @@ router.get("/capacitaciones/:id/HTML", async (req, res) => {
       return res.status(404).json({ error: "Capacitación no encontrada" });
     }
 
-    const sucursalIds = normalizarEnumList(capacitacion.sucursales);
+    const sucursalesRaw = obtenerValorPorClaves(capacitacion, [
+      "sucursales",
+      "SUCURSALES",
+      "Sucursales",
+      "SUCURSAL",
+      "Sucursal",
+      "IDS SUCURSALES",
+      "IDs Sucursales",
+      "ID SUCURSAL"
+    ]);
+    const sucursalIds = normalizarEnumList(sucursalesRaw);
     const sucursalesData = await Promise.all(
       sucursalIds.map(id => obtenerSucursalCompleta(id))
     );
@@ -239,9 +278,14 @@ router.get("/capacitaciones/:id/HTML", async (req, res) => {
     }
 
     const capacitadores = await obtenerCapacitadores();
-    const fechaCap = normalizarFechaParaInput(
-      capacitacion.fechaCapacitacion
-    );
+    const fechaCapRaw = obtenerValorPorClaves(capacitacion, [
+      "fechaCapacitacion",
+      "FECHA CAPACITACION",
+      "Fecha Capacitacion",
+      "FECHA",
+      "Fecha"
+    ]);
+    const fechaCap = normalizarFechaParaInput(fechaCapRaw);
 
     res.render("constancia_form_capacitacion", {
       capacitacion,
