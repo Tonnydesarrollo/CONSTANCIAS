@@ -68,6 +68,68 @@ function normalizarFechaParaInput(fecha) {
   return "";
 }
 
+function normalizarEnumList(valor) {
+  if (!valor) return [];
+  if (Array.isArray(valor)) {
+    return valor.map(v => String(v).trim()).filter(Boolean);
+  }
+
+  const raw = String(valor).trim();
+  if (!raw) return [];
+
+  if (raw.startsWith("[")) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        return parsed.map(v => String(v).trim()).filter(Boolean);
+      }
+    } catch (e) {
+      // fall through to separator-based parsing
+    }
+  }
+
+  return raw
+    .split(/[,;\n]+/)
+    .map(v => v.trim())
+    .filter(Boolean);
+}
+
+function obtenerDriveLink(driveData) {
+  if (!driveData) return "";
+
+  if (typeof driveData === "string") {
+    const trimmed = driveData.trim();
+    if (!trimmed) return "";
+    if (trimmed.startsWith("{")) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        return parsed.Url || parsed.url || "";
+      } catch (e) {
+        return "";
+      }
+    }
+    return trimmed;
+  }
+
+  if (typeof driveData === "object") {
+    return driveData.Url || driveData.url || "";
+  }
+
+  return "";
+}
+
+function obtenerValorPorClaves(obj, claves) {
+  if (!obj) return undefined;
+
+  for (const clave of claves) {
+    if (obj[clave] !== undefined && obj[clave] !== null) {
+      return obj[clave];
+    }
+  }
+
+  return undefined;
+}
+
 /* ======================================================
    POST /generar
 ====================================================== */
