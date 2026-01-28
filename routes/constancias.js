@@ -71,9 +71,26 @@ function normalizarFechaParaInput(fecha) {
 
 function normalizarEnumList(valor) {
   if (!valor) return [];
-  if (Array.isArray(valor)) return valor.map(v => String(v).trim()).filter(Boolean);
-  return String(valor)
-    .split(",")
+  if (Array.isArray(valor)) {
+    return valor.map(v => String(v).trim()).filter(Boolean);
+  }
+
+  const raw = String(valor).trim();
+  if (!raw) return [];
+
+  if (raw.startsWith("[")) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        return parsed.map(v => String(v).trim()).filter(Boolean);
+      }
+    } catch (e) {
+      // fall through to separator-based parsing
+    }
+  }
+
+  return raw
+    .split(/[,;\n]+/)
     .map(v => v.trim())
     .filter(Boolean);
 }
