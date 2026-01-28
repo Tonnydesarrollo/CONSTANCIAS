@@ -7,9 +7,8 @@
 
   <style>
     :root {
-      /* Paleta institucional basada en el logo de Desarrollo EG */
-      --primary: #1e3a8a; /* Azul marino profundo */
-      --accent: #d97706;  /* Dorado/Ambar sutil para detalles */
+      --primary: #1e3a8a;
+      --accent: #d97706;
       --primary-hover: #172554;
       --danger: #ef4444;
       --bg: #f1f5f9;
@@ -23,383 +22,372 @@
       color: var(--text);
       margin: 0;
       padding: 20px;
-      display: flex;
-      justify-content: center;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 450px 1fr;
+      gap: 20px;
+      max-width: 1600px;
+      margin: auto;
+    }
+
+    @media (max-width: 1200px) {
+      .layout { grid-template-columns: 1fr; }
+      .preview-panel { height: 800px; }
     }
 
     .container {
-      max-width: 850px;
-      width: 100%;
       background: white;
-      padding: 0;
       border-radius: 12px;
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
       overflow: hidden;
     }
 
-    /* ENCABEZADO INSTITUCIONAL */
     .header-institucional {
       background: linear-gradient(135deg, #1e3a8a 0%, #172554 100%);
-      padding: 30px;
+      padding: 20px;
       color: white;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 15px;
     }
 
-    .logo-container {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
+    .logo-img { height: 60px; }
 
-    .logo-img {
-      height: 80px;
-      width: auto;
-      filter: drop-shadow(0 0 8px rgba(255,255,255,0.2));
-    }
-
-    .header-text h1 {
-      margin: 0;
-      font-size: 1.5rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      border: none;
-      color: white;
-    }
-
-    .header-text p {
-      margin: 5px 0 0 0;
-      font-size: 0.9rem;
-      opacity: 0.8;
-    }
-
-    .content-padding {
-      padding: 40px;
-    }
-
-    .grupo { margin-bottom: 25px; }
+    .content-padding { padding: 25px; }
+    .grupo { margin-bottom: 20px; }
 
     label {
       font-weight: 700;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
       margin-bottom: 8px;
       display: block;
       color: #64748b;
     }
 
-    h2 { margin: 0; font-size: 1.3rem; color: var(--primary); font-weight: 600; }
+    h2 { margin: 0; font-size: 1.2rem; color: var(--primary); }
 
     select, input[type="date"], input[type="text"] {
       width: 100%;
-      padding: 12px;
+      padding: 10px;
       border: 1px solid var(--border);
       border-radius: 6px;
-      font-size: 1rem;
+      font-size: 0.95rem;
       box-sizing: border-box;
-      transition: all 0.2s;
-    }
-
-    select:focus, input:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
     }
 
     .table-container {
       border: 1px solid var(--border);
       border-radius: 8px;
-      overflow: hidden;
-      margin-top: 10px;
+      overflow-y: auto;
+      max-height: 300px;
     }
 
     table { width: 100%; border-collapse: collapse; }
-    table th { background: #f8fafc; text-align: left; padding: 12px; font-size: 0.8rem; color: #475569; }
-    table td { padding: 10px 12px; border-top: 1px solid var(--border); }
-
-    button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 12px 24px;
-      border-radius: 6px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      border: none;
-    }
+    table th { background: #f8fafc; padding: 10px; font-size: 0.75rem; text-align: left; }
+    table td { padding: 8px; border-top: 1px solid var(--border); }
 
     .btn-add {
-      background-color: #f1f5f9;
+      background: #f1f5f9;
       color: var(--primary);
-      border: 1px solid var(--primary);
+      border: 1px dashed var(--primary);
       width: 100%;
       margin-top: 10px;
+      padding: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      border-radius: 6px;
     }
-    .btn-add:hover { background-color: var(--primary); color: white; }
 
-    .btn-delete {
-      background-color: #fee2e2;
-      color: var(--danger);
-      width: 32px;
-      height: 32px;
-      padding: 0;
-    }
-    .btn-delete:hover { background-color: var(--danger); color: white; }
+    .btn-delete { background: #fee2e2; color: var(--danger); width: 30px; height: 30px; border-radius: 4px; cursor: pointer; border: none; }
 
-    .acciones {
+    .acciones { display: flex; gap: 15px; margin-top: 30px; }
+    .btn-primary { background: var(--primary); color: white; flex: 2; font-size: 1rem; padding: 15px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    .btn-secondary { background: #e2e8f0; flex: 1; padding: 15px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+
+    /* PREVIEW PANEL */
+    .preview-panel {
+      background: #334155;
+      border-radius: 12px;
       display: flex;
-      gap: 15px;
-      margin-top: 40px;
-      padding-top: 25px;
-      border-top: 2px solid var(--bg);
-    }
-
-    .btn-primary { background-color: var(--primary); color: white; flex: 2; }
-    .btn-primary:hover { background-color: var(--primary-hover); box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2); }
-    .btn-secondary { background-color: #e2e8f0; color: #1e293b; flex: 1; }
-
-    .file-zone {
-      background: #f8fafc;
-      border: 2px dashed var(--border);
-      padding: 20px;
-      border-radius: 8px;
-      text-align: center;
-    }
-
-    /* LOADER */
-    #loader-overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(15, 23, 42, 0.7);
-      backdrop-filter: blur(5px);
-      display: none;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
+      overflow: hidden;
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,.1);
+    }
+
+    .preview-header {
+      padding: 15px;
+      background: #1e293b;
       color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .spinner {
-      width: 60px; height: 60px;
-      border: 6px solid rgba(255,255,255,0.2);
-      border-top: 6px solid white;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
+    #previewFrame { flex: 1; border: none; background: #334155; width: 100%; }
 
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    #loader-overlay {
+      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8);
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+      color: white; z-index: 9999;
+    }
+    .spinner { width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.1); border-top: 5px solid white; border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  .btn-drive {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #ffffff;
+  color: #1e3a8a; /* Color primary de tu root */
+  border: 2px solid #1e3a8a;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.btn-drive:hover {
+  background-color: #1e3a8a;
+  color: #ffffff;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.btn-drive img {
+  filter: drop-shadow(0px 1px 1px rgba(0,0,0,0.2));
+}
   </style>
 </head>
-
 <body>
 
 <div id="loader-overlay">
   <div class="spinner"></div>
-  <div id="loader-message" style="margin-top: 20px; font-weight: 500;">Procesando datos...</div>
+  <p id="loader-text" style="margin-top: 15px;">Procesando...</p>
 </div>
 
-<div class="container">
-  <div class="header-institucional">
-    <div class="logo-container">
-      <img src="/img/Logo sin fondo 3D HD.png" alt="Desarrollo EG" class="logo-img">
-      <div class="header-text">
-        <h1>Gestión de Constancias</h1>
-        <p>Desarrollo EG Consultores</p>
+<div class="layout">
+  <div class="container">
+    <div class="header-institucional">
+      <img src="/img/Logo sin fondo 3D HD.png" class="logo-img" alt="Logo">
+      <div>
+        <h1 style="margin:0; font-size: 1.4rem;">Gestión de Constancias</h1>
+        <small>Desarrollo EG Consultores</small>
+      </div>
+    </div>
+
+    <div class="content-padding">
+ <div class="grupo">
+  <label>Unidad / Sucursal</label>
+  <h2><%= sucursal.LABEL %></h2>
+  
+  <% 
+    let driveLink = "";
+    let driveData = sucursal.DRIVE;
+
+    // Si el dato es un string que parece JSON (como el de tu error), lo parseamos
+    if (typeof driveData === 'string' && driveData.startsWith('{')) {
+      try {
+        let parsed = JSON.parse(driveData);
+        driveLink = parsed.Url || parsed.url;
+      } catch (e) {
+        driveLink = ""; 
+      }
+    } 
+    // Si ya es un objeto
+    else if (typeof driveData === 'object' && driveData !== null) {
+      driveLink = driveData.Url || driveData.url;
+    } 
+    // Si es un string directo (el link solo)
+    else {
+      driveLink = driveData;
+    }
+  %>
+
+  <% if (driveLink && driveLink !== "undefined") { %>
+    <a href="<%= driveLink %>" target="_blank" class="btn-drive">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg" alt="Drive" style="width:20px; height:20px;">
+      Abrir Carpeta de Evidencias
+    </a>
+  <% } else { %>
+    <small style="color: #94a3b8; font-style: italic;">Carpeta no configurada</small>
+  <% } %>
+</div>
+
+      <div class="grupo">
+        <label>Capacitador / Consultor</label>
+        <select id="capacitador">
+          <option value="" disabled selected>-- Seleccione --</option>
+          <% capacitadores.forEach(c => { %>
+            <option value="<%= c.ID %>"><%= c.NOMBRE %></option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div class="grupo">
+        <label>Fecha de Emisión</label>
+        <input type="date" id="fecha" value="<%= fecha %>">
+      </div>
+
+      <div class="grupo">
+        <label>Participantes</label>
+        <div class="table-container">
+          <table id="tablaParticipantes">
+            <tbody>
+              <tr>
+                <td><input type="text" name="nombres[]" placeholder="Nombre completo"></td>
+                <td style="width: 40px;"><button class="btn-delete" onclick="eliminarFila(this)">✕</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <button class="btn-add" onclick="agregarFila()">+ Añadir manualmente</button>
+      </div>
+
+      <div class="grupo">
+        <label>Importación Excel</label>
+        <input type="file" id="archivo" accept=".xlsx,.xls,.csv">
+      </div>
+
+      <div class="acciones">
+        <button class="btn-secondary" onclick="exportarExcel()">📥 Respaldar</button>
+        <button class="btn-primary" onclick="generarConstancias()">🚀 Generar y Visualizar</button>
       </div>
     </div>
   </div>
 
-  <div class="content-padding">
-    <div class="grupo">
-      <label>Unidad / Sucursal</label>
-      <h2><%= sucursal.LABEL %></h2>
+  <div class="preview-panel">
+    <div class="preview-header">
+      <span>Vista Previa Real (Hoja Letter)</span>
+      <button onclick="imprimirIframe()" style="background:#e74c3c; color:white; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:bold; border:none;">
+        🖨️ Imprimir / Guardar PDF
+      </button>
     </div>
-
-    <div class="grupo">
-      <label>Consultor / Capacitador Autorizado</label>
-      <select id="capacitador" name="capacitador">
-        <% if (locals.capacitadorSeleccionado) { %>
-          <option value="<%= capacitadorSeleccionado.ID %>" selected><%= capacitadorSeleccionado.NOMBRE %></option>
-        <% } else { %>
-          <option value="" selected disabled>-- Seleccione un capacitador --</option>
-        <% } %>
-        <% (Array.isArray(capacitadores) ? capacitadores : []).forEach(emp => { 
-            if (!locals.capacitadorSeleccionado || emp.ID !== capacitadorSeleccionado.ID) { %>
-              <option value="<%= emp.ID %>"><%= emp.NOMBRE %></option>
-        <% } }) %>
-      </select>
-    </div>
-
-    <div class="grupo">
-      <label>Fecha de Emisión</label>
-      <input type="date" id="fecha" value="<%= fecha %>" />
-    </div>
-
-    <div class="grupo">
-      <label>Registro de Participantes</label>
-      <div class="table-container">
-        <table id="tablaParticipantes">
-          <thead>
-            <tr>
-              <th>Nombre Completo</th>
-              <th style="width: 50px;"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><input type="text" name="nombres[]" placeholder="Nombre completo del participante" /></td>
-              <td><button type="button" class="btn-delete" onclick="eliminarFila(this)">✕</button></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <button type="button" class="btn-add" onclick="agregarFila()">+ Añadir participante manualmente</button>
-    </div>
-
-    <div class="grupo">
-      <label>Importación de Listas (Excel / CSV)</label>
-      <div class="file-zone">
-        <input type="file" id="archivo" accept=".xlsx,.csv" />
-      </div>
-    </div>
-
-    <div class="acciones">
-      <button class="btn-secondary" onclick="exportarExcel()">📥 Respaldar Lista</button>
-      <button class="btn-primary" onclick="generarConstancias()">🚀 Validar y Generar Constancias</button>
-    </div>
+    <iframe id="previewFrame" name="previewFrame"></iframe>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-
 <script>
-  function showLoader(mensaje) {
-    document.getElementById("loader-message").innerText = mensaje || "Procesando...";
+  function showLoader(msg) {
+    document.getElementById("loader-text").innerText = msg;
     document.getElementById("loader-overlay").style.display = "flex";
   }
+  function hideLoader() { document.getElementById("loader-overlay").style.display = "none"; }
 
-  function hideLoader() {
-    document.getElementById("loader-overlay").style.display = "none";
-  }
-
-  function agregarFila() {
+  function agregarFila(valor = "") {
     const tbody = document.querySelector("#tablaParticipantes tbody");
     const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td><input type="text" name="nombres[]" placeholder="Nombre completo del participante" /></td>
-      <td><button type="button" class="btn-delete" onclick="eliminarFila(this)">✕</button></td>
-    `;
+    tr.innerHTML = `<td><input type="text" name="nombres[]" value="${valor}" placeholder="Nombre Completo"></td>
+                    <td><button class="btn-delete" onclick="eliminarFila(this)">✕</button></td>`;
     tbody.appendChild(tr);
   }
 
   function eliminarFila(btn) {
     const filas = document.querySelectorAll("#tablaParticipantes tbody tr");
-    if (filas.length > 1) {
-      btn.closest("tr").remove();
-    } else {
-      btn.closest("tr").querySelector('input').value = "";
-    }
+    if (filas.length > 1) btn.closest("tr").remove();
   }
 
   function obtenerNombres() {
-    return Array.from(document.querySelectorAll('input[name="nombres[]"]'))
-      .map(i => i.value)
-      .filter(v => v.trim() !== "");
+    return [...document.querySelectorAll('input[name="nombres[]"]')].map(i => i.value.trim()).filter(Boolean);
+  }
+
+  function imprimirIframe() {
+    const iframe = document.getElementById('previewFrame');
+    if (iframe.contentWindow) {
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+    }
   }
 
   function generarConstancias() {
     const participantes = obtenerNombres();
-    const capacitador = document.getElementById("capacitador").value;
+    const capacitadorId = document.getElementById("capacitador").value;
     const fecha = document.getElementById("fecha").value;
 
-    if (!participantes.length) return alert("Ingrese al menos un participante.");
-    if (!capacitador) return alert("Seleccione el capacitador responsable.");
-    if (!fecha) return alert("Defina la fecha de la capacitación.");
+    if (!participantes.length || !capacitadorId || !fecha) return alert("Complete todos los campos");
 
-    showLoader("Generando constancias con firma institucional...");
+    showLoader("Sincronizando dimensiones...");
 
     fetch("/constancias/generar", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        sucursalId: "<%= sucursal.ID %>",
-        capacitadorId: capacitador,
-        fecha: fecha,
-        participantes
-      })
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sucursalId: "<%= sucursal.ID %>", capacitadorId, fecha, participantes })
     })
     .then(r => r.text())
     .then(html => {
-      const w = window.open();
-      w.document.write(html);
-      w.document.close();
+        const iframe = document.getElementById("previewFrame");
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+        doc.open();
+        // IMPORTANTE: Limpiamos espacios al insertar el HTML
+        doc.write(html.replace(/>\s+</g, '><')); 
+        doc.close();
+
+        iframe.onload = function() {
+            const win = iframe.contentWindow;
+            const style = win.document.createElement('style');
+            
+            const diplomaWidth = 1056; // 11in * 96dpi
+            const scale = (iframe.offsetWidth / diplomaWidth) * 0.95;
+
+            style.innerHTML = `
+                @media screen {
+                    body {
+                        background: #334155 !important;
+                        margin: 0 !important;
+                        padding: 40px 0 !important;
+                        display: flex !important;
+                        flex-direction: column !important;
+                        align-items: center !important;
+                    }
+                    .diploma-canvas {
+                        transform: scale(${scale});
+                        transform-origin: top center;
+                        /* Compensamos el espacio que deja el transform scale */
+                        margin-bottom: -${813 * (1 - scale)}px !important; 
+                        box-shadow: 0 20px 50px rgba(0,0,0,0.5) !important;
+                    }
+                }
+            `;
+            win.document.head.appendChild(style);
+        };
     })
-    .catch(err => alert("Error de comunicación con el sistema."))
-    .finally(() => hideLoader());
-  }
+    .catch(err => alert("Error al conectar con el servidor"))
+    .finally(hideLoader);
+}
 
-  function exportarExcel() {
-    const nombres = obtenerNombres();
-    if (!nombres.length) return alert("No hay datos para exportar.");
-
-    showLoader("Exportando base de datos...");
-    
-    setTimeout(() => {
-      const data = [["Nombre del participante"], ...nombres.map(n => [n])];
-      const worksheet = XLSX.utils.aoa_to_sheet(data);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Participantes");
-      worksheet["!cols"] = [{ wch: 45 }];
-      const f = document.getElementById("fecha").value || "sin-fecha";
-      XLSX.writeFile(workbook, `capacitacion_eg_${f}.xlsx`);
-      hideLoader();
-    }, 500);
-  }
-
+  // Manejo de Excel
   document.getElementById("archivo").addEventListener("change", e => {
     const file = e.target.files[0];
     if (!file) return;
-
-    showLoader("Procesando lista externa...");
-
     const reader = new FileReader();
     reader.onload = evt => {
-      try {
-        const data = new Uint8Array(evt.target.result);
-        const workbook = XLSX.read(data, { type: "array" });
-        const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
-        const tbody = document.querySelector("#tablaParticipantes tbody");
-        tbody.innerHTML = "";
-
-        rows.forEach((r, index) => {
-          const nombre = (r[0] || "").toString().trim();
-          if (index === 0 && /nombre|participante|empleado/i.test(nombre)) return;
-          if (!nombre) return;
-
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td><input type="text" name="nombres[]" value="${nombre}" /></td>
-            <td><button type="button" class="btn-delete" onclick="eliminarFila(this)">✕</button></td>
-          `;
-          tbody.appendChild(tr);
-        });
-      } catch (err) {
-        alert("Formato de archivo no compatible.");
-      } finally {
-        e.target.value = "";
-        setTimeout(hideLoader, 600);
-      }
+      const data = new Uint8Array(evt.target.result);
+      const workbook = XLSX.read(data, { type: "array" });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+      const tbody = document.querySelector("#tablaParticipantes tbody");
+      tbody.innerHTML = "";
+      rows.forEach((r, idx) => {
+        const nombre = (r[0] || "").toString().trim();
+        if (!nombre || (idx === 0 && /nombre|lista/i.test(nombre))) return;
+        agregarFila(nombre);
+      });
     };
     reader.readAsArrayBuffer(file);
   });
-</script>
 
+  function exportarExcel() {
+    const nombres = obtenerNombres();
+    if (!nombres.length) return alert("No hay datos");
+    const ws = XLSX.utils.aoa_to_sheet([["Participante"], ...nombres.map(n => [n])]);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Lista");
+    XLSX.writeFile(wb, `Lista_${new Date().toISOString().slice(0,10)}.xlsx`);
+  }
+</script>
 </body>
 </html>
