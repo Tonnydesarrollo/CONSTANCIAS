@@ -75,7 +75,7 @@ window.onload = () => {
   });
 };
 
-function descargarPDF() {
+async function descargarPDF() {
   if (typeof html2pdf === "undefined") {
     alert("No se pudo cargar el generador de PDF.");
     return;
@@ -84,12 +84,34 @@ function descargarPDF() {
   const container = document.getElementById("diplomas-container");
   if (!container) return;
 
+  const images = Array.from(container.querySelectorAll("img"));
+  await Promise.all(images.map(img => {
+    if (img.complete) return Promise.resolve();
+    return new Promise(resolve => {
+      img.onload = resolve;
+      img.onerror = resolve;
+    });
+  }));
+
+  if (document.fonts && document.fonts.ready) {
+    await document.fonts.ready;
+  }
+
   const filename = `constancias-${new Date().toISOString().slice(0, 10)}.pdf`;
   const options = {
     margin: 0,
     filename,
     image: { type: "jpeg", quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true, logging: false },
+    html2canvas: {
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      logging: false,
+      width: 1056,
+      height: 816,
+      windowWidth: 1056,
+      windowHeight: 816
+    },
     jsPDF: { unit: "in", format: "letter", orientation: "landscape" },
     pagebreak: { mode: ["css", "legacy"] }
   };
