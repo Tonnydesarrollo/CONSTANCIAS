@@ -76,7 +76,7 @@ window.onload = () => {
 };
 
 async function descargarPDF() {
-  if (typeof html2pdf === "undefined") {
+  if (typeof html2canvas === "undefined" || !window.jspdf) {
     alert("No se pudo cargar el generador de PDF.");
     return;
   }
@@ -97,26 +97,37 @@ async function descargarPDF() {
     await document.fonts.ready;
   }
 
-  const filename = `constancias-${new Date().toISOString().slice(0, 10)}.pdf`;
-  const options = {
-    margin: 0,
-    filename,
-    image: { type: "jpeg", quality: 0.98 },
-    html2canvas: {
+  const diplomaPages = Array.from(container.querySelectorAll(".diploma-canvas"));
+  if (!diplomaPages.length) return;
+
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({ unit: "in", format: "letter", orientation: "landscape" });
+
+  for (let index = 0; index < diplomaPages.length; index++) {
+    const page = diplomaPages[index];
+    const rect = page.getBoundingClientRect();
+    const width = Math.round(rect.width || 1056);
+    const height = Math.round(rect.height || 816);
+
+    const canvas = await html2canvas(page, {
       scale: 2,
       useCORS: true,
       allowTaint: true,
+      backgroundColor: "#ffffff",
       logging: false,
-      width: 1056,
-      height: 816,
-      windowWidth: 1056,
-      windowHeight: 816
-    },
-    jsPDF: { unit: "in", format: "letter", orientation: "landscape" },
-    pagebreak: { mode: ["css", "legacy"] }
-  };
+      width,
+      height,
+      windowWidth: width,
+      windowHeight: height
+    });
 
-  html2pdf().set(options).from(container).save();
+    const imageData = canvas.toDataURL("image/jpeg", 0.98);
+    if (index > 0) pdf.addPage();
+    pdf.addImage(imageData, "JPEG", 0, 0, 11, 8.5);
+  }
+
+  const filename = `constancias-${new Date().toISOString().slice(0, 10)}.pdf`;
+  pdf.save(filename);
 }
 </script>
 
