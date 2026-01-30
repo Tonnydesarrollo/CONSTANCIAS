@@ -25,25 +25,28 @@
 }
 
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 
-<% participantes.forEach((nombre, i) => { %>
+<div id="diplomas-container">
+  <% participantes.forEach((nombre, i) => { %>
 
-  <%- include("diploma", {
-    participante: nombre,
-    empresa,
-    sucursalLabel,
-    logoEmpresa,
-    capacitador,
-    fecha
-  }) %>
+    <%- include("diploma", {
+      participante: nombre,
+      empresa,
+      sucursalLabel,
+      logoEmpresa,
+      capacitador,
+      fecha
+    }) %>
 
-  <% if (i < participantes.length - 1) { %>
-    <div class="page-break"></div>
-  <% } %>
+    <% if (i < participantes.length - 1) { %>
+      <div class="page-break"></div>
+    <% } %>
 
-<% }) %>
+  <% }) %>
+</div>
 <script>
 window.onload = () => {
   requestAnimationFrame(() => {
@@ -71,6 +74,28 @@ window.onload = () => {
     });
   });
 };
+
+function descargarPDF() {
+  if (typeof html2pdf === "undefined") {
+    alert("No se pudo cargar el generador de PDF.");
+    return;
+  }
+
+  const container = document.getElementById("diplomas-container");
+  if (!container) return;
+
+  const filename = `constancias-${new Date().toISOString().slice(0, 10)}.pdf`;
+  const options = {
+    margin: 0,
+    filename,
+    image: { type: "jpeg", quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true, logging: false },
+    jsPDF: { unit: "in", format: "letter", orientation: "landscape" },
+    pagebreak: { mode: ["css", "legacy"] }
+  };
+
+  html2pdf().set(options).from(container).save();
+}
 </script>
 
 

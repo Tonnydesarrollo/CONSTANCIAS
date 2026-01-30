@@ -247,6 +247,9 @@
   <div class="preview-panel">
     <div class="preview-header">
       <span>Vista Previa Real (Hoja Letter)</span>
+      <button onclick="descargarPdfIframe()" style="background:#2563eb; color:white; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:bold; border:none;">
+        ⬇️ Descargar PDF
+      </button>
       <button onclick="imprimirIframe()" style="background:#e74c3c; color:white; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:bold; border:none;">
         🖨️ Imprimir / Guardar PDF
       </button>
@@ -315,6 +318,14 @@
       iframe.contentWindow.focus();
       iframe.contentWindow.print();
     }
+  }
+
+  function descargarPdfIframe() {
+    const iframe = document.getElementById('previewFrame');
+    if (!iframe.contentWindow || typeof iframe.contentWindow.descargarPDF !== "function") {
+      return alert("Primero genera la vista previa para descargar el PDF.");
+    }
+    iframe.contentWindow.descargarPDF();
   }
 
   function generarConstancias() {
